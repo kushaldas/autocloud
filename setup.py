@@ -1,6 +1,8 @@
 from setuptools import setup
 
 requires = [
+    'redis',
+    'retask',
     'fedmsg',
 ]
 
