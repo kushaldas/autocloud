@@ -3,7 +3,7 @@
 import autocloud
 
 def get_image_url(result):
-    url_template = "{file_location}/{file_name}'
+    url_template = "{file_location}/{file_name}"
     images_list = [f for f in task_result['files'] if f.endswith('.qcow2')]
     if not images_list:
         return None
