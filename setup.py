@@ -1,6 +1,7 @@
 from setuptools import setup
 
 requires = [
+    'SQLAlchemy>=0.8',
     'redis',
     'retask',
     'fedmsg',
