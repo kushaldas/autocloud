@@ -1,6 +1,34 @@
 # -*- coding: utf-8 -*-
 
+from retask import Task
+from retask import Queue
+
 import autocloud
+
+def get_redis_config():
+    """ Get the redis server configuration in json
+    """
+    config_path = autocloud.REDIS_CONFIG_FILEPATH
+
+    try:
+        with open(config_path) as fobj:
+            config = json.load(fobj)
+            return config
+    except Exception, e:
+        log('get_redis_config', str(e), 'error')
+    return None
+
+def produce_jobs(infox):
+    """ Queue the jobs into jobqueue
+    :args infox: list of dictionaries contains the image url and the buildid
+    """
+    config = get_redis_config()
+    jobqueue = Queue('jobqueue', config)
+    jobqueue.connect()
+
+    for info in infox:
+        task = Task(info)
+        jobqueue.enqueue(task)
 
 def get_image_url(result):
     url_template = "{file_location}/{file_name}"
@@ -18,3 +46,4 @@ def get_image_url(result):
 
     return url_template.format(file_location=full_file_location,
                                file_name=file_name)
+

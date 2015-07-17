@@ -3,7 +3,7 @@
 import fedmsg.consumers
 import koji
 
-from autocloud.utils import get_image_url
+from autocloud.utils import get_image_url, produce_jobs
 
 import logging
 log = logging.getLogger("fedmsg")
@@ -73,3 +73,5 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                         if child["state"] == 2:
                             builds.append(child["id"])
 
+        if len(builds) > 0:
+            produce_jobs(self._get_tasks(builds))
