@@ -4,6 +4,11 @@ from retask import Task
 from retask import Queue
 
 import autocloud
+import json
+
+import logging
+log = logging.getLogger("fedmsg")
+
 
 def get_redis_config():
     """ Get the redis server configuration in json
@@ -18,6 +23,7 @@ def get_redis_config():
         log('get_redis_config', str(e), 'error')
     return None
 
+
 def produce_jobs(infox):
     """ Queue the jobs into jobqueue
     :args infox: list of dictionaries contains the image url and the buildid
@@ -30,7 +36,8 @@ def produce_jobs(infox):
         task = Task(info)
         jobqueue.enqueue(task)
 
-def get_image_url(result):
+
+def get_image_url(task_result):
     url_template = "{file_location}/{file_name}"
     images_list = [f for f in task_result['files'] if f.endswith('.qcow2')]
     if not images_list:
@@ -46,4 +53,3 @@ def get_image_url(result):
 
     return url_template.format(file_location=full_file_location,
                                file_name=file_name)
-

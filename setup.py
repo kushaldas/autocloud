@@ -5,6 +5,7 @@ requires = [
     'redis',
     'retask',
     'fedmsg',
+    'jenkinsapi',
 ]
 
 setup(
@@ -22,4 +23,3 @@ setup(
         ],
     },
 )
-
