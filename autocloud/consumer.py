@@ -4,6 +4,7 @@ import fedmsg.consumers
 import koji
 
 from autocloud.utils import get_image_url, produce_jobs
+import autocloud
 
 import logging
 log = logging.getLogger("fedmsg")
@@ -15,7 +16,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
     def __init__(self, *args, **kwargs):
         super(AutoCloudConsumer, self).__init__(*args, **kwargs)
 
-    def _get_tasks(self):
+    def _get_tasks(self, builds):
         """ Takes a list of koji createImage task IDs and returns dictionary of
         build ids and image url corresponding to that build ids"""
 

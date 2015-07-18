@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 from retask import Task
 from retask import Queue
 
@@ -9,6 +11,9 @@ import json
 import logging
 log = logging.getLogger("fedmsg")
 
+
+import logging
+log = logging.getLogger("fedmsg")
 
 def get_redis_config():
     """ Get the redis server configuration in json
@@ -20,7 +25,7 @@ def get_redis_config():
             config = json.load(fobj)
             return config
     except Exception, e:
-        log('get_redis_config', str(e), 'error')
+        log.debug('get_redis_config', str(e), 'error')
     return None
 
 
@@ -39,13 +44,13 @@ def produce_jobs(infox):
 
 def get_image_url(task_result):
     url_template = "{file_location}/{file_name}"
-    images_list = [f for f in task_result['files'] if f.endswith('.qcow2')]
+    images_list = [f for f in result['files'] if f.endswith('.qcow2')]
     if not images_list:
         return None
 
     file_name = images_list[0]
 
-    task_id = task_result['task_id']
+    task_id = result['task_id']
 
     # extension to base URL to exact file directory
     koji_url_extension = "/{}/{}".format(str(task_id)[3:], str(task_id))
