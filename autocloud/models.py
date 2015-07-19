@@ -15,7 +15,10 @@ Base = declarative_base()
 class JobDetails(Base):
     __tablename__ = 'job_details'
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    taskid = Column(String(255), nullable=False)
+    created_on = Column(sa.DateTime, default=datetime.datetime.utcnow)
+    last_updated = Column(sa.DateTime, default=datetime.datetime.utcnow)
+    user = Column(String(255), nullable=False)
 
 # Create an engine that stores data in the local directory
 engine = create_engine(autocloud.SQLALCHEMY_URI)
