@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import json
-
 from retask import Task
 from retask import Queue
 
 import autocloud
 import json
-
-import logging
-log = logging.getLogger("fedmsg")
-
 
 import logging
 log = logging.getLogger("fedmsg")
