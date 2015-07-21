@@ -7,6 +7,8 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
 
 import autocloud
 
@@ -20,9 +22,19 @@ class JobDetails(Base):
     last_updated = Column(sa.DateTime, default=datetime.datetime.utcnow)
     user = Column(String(255), nullable=False)
 
-# Create an engine that stores data in the local directory
-engine = create_engine(autocloud.SQLALCHEMY_URI)
 
-# Create all tables in the engine. This is equivalent to "Create Table"
-# statements in raw SQL.
-Base.metadata.create_all(engine)
+def create_tables():
+    # Create an engine that stores data in the local directory
+    engine = create_engine(autocloud.SQLALCHEMY_URI)
+
+    # Create all tables in the engine. This is equivalent to "Create Table"
+    # statements in raw SQL.
+    Base.metadata.create_all(engine)
+
+
+def init_model():
+    engine = create_engine(autocloud.SQLALCHEMY_URI)
+    scopedsession = scoped_session(sessionmaker(bind=engine))
+    return scopedsession
+
+create_tables()
