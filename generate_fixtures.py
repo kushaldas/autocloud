@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import os
 import sys
 import json
 import logging
@@ -13,6 +14,16 @@ params = {
     'topic': 'org.fedoraproject.prod.buildsys.task.state.change',
     'rows_per_page': 100,
 }
+
+
+FILEPATH = os.getcwd() + '/fixtures.json'
+
+if not os.stat(FILEPATH).st_size == 0:
+    choice = int(raw_input("A fixture file with data already exists. "
+                           "Do you want to continue? (0-Yes, 1-No)\n"))
+
+    if choice:
+        sys.exit(0)
 
 with open('fixtures.json', 'w') as outfile:
     counter = 1
