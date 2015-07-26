@@ -2,13 +2,15 @@
 
 import os
 import sys
+import datetime
 
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
+from sqlalchemy_utils import ChoiceType
 
 import autocloud
 
@@ -16,10 +18,18 @@ Base = declarative_base()
 
 class JobDetails(Base):
     __tablename__ = 'job_details'
+
+    STATUS_TYPES = (
+        ('s', 'Success'),
+        ('f', 'Failed'),
+        ('a', 'Aborted'),
+        ('r', 'Running')
+    )
     id = Column(Integer, primary_key=True)
     taskid = Column(String(255), nullable=False)
-    created_on = Column(sa.DateTime, default=datetime.datetime.utcnow)
-    last_updated = Column(sa.DateTime, default=datetime.datetime.utcnow)
+    status = Column(ChoiceType(STATUS_TYPES))
+    created_on = Column(DateTime, default=datetime.datetime.utcnow)
+    last_updated = Column(DateTime, default=datetime.datetime.utcnow)
     user = Column(String(255), nullable=False)
 
 
