@@ -3,3 +3,4 @@ fedmsg
 redis
 retask
 jenkinsapi
+sqlalchemy-utils
