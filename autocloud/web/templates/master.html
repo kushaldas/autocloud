@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Dashboard for autocloud build results" />
+    <meta name="author" content="Ratnadeep Debnath" />
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+
+    <title>Autocloud</title>
+
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/text.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/navbar.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/footer.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/avatars.css') }}" rel="stylesheet" />
+  </head>
+
+  <body>
+
+    <div id="wrap" class="container{{ ' max-width' if current == 'index' }}">
+
+      <!-- Static navbar -->
+      <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                  data-target=".navbar-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{url_for('index')}}">
+              Autocloud</a>
+          </div>
+
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                {% if 'about' == current %}
+                <li class="active">
+                {% else %}
+                <li>
+                {% endif %}
+                <a href="#">
+                  <span class="glyphicon glyphicon-question-sign"></span>
+                  About</a>
+                <li>
+            </ul>
+
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+
+      {% block body %}{% endblock %}
+
+    </div> <!-- /container -->
+
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">
+        Autocloud is powered by
+        <a href="http://fedmsg.com">fedmsg</a>.  The
+        <a href="https://github.com/kushaldas/autocloud">source</a>
+        and
+        <a href="https://github.com/kushaldas/autocloud/issues">issue tracker</a>
+        are available on github.
+        ©2013-2015 Red Hat, Inc., <a href="http://kushaldas.in">Kushal Das</a>.
+        </p>
+      </div>
+    </div>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{{ url_for('static', filename='js/jquery-1.10.2.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/site.js')}}"></script>
+    <script>$('[data-toggle="tooltip"]').tooltip();</script>
+    <script>
+      $(document).ready(function() {
+          $(".btn-edit").click(function(ev) {
+              var sel = $(this).attr('data-parent');
+              $(sel + ' .read').addClass('hidden');
+              $(sel + ' .write').removeClass('hidden');
+          });
+          $(".btn-cancel").click(function(ev) {
+              var sel = $(this).attr('data-parent');
+              $(sel + ' .write').addClass('hidden');
+              $(sel + ' .read').removeClass('hidden');
+          });
+      });
+    </script>
+
+    {% if config['FEDMENU_URL'] %}
+    <script src="{{ config['FEDMENU_URL'] }}/js/fedmenu.js"></script>
+    <script src="{{ config['FEDMENU_URL'] }}/js/fedora-libravatar.js"></script>
+    <script>
+      fedmenu({
+          'url': '{{ config["FEDMENU_DATA_URL"] }}',
+          'mimeType': 'application/javascript',
+          'position': 'bottom-right',
+          {% if openid and '.id.fedoraproject.org' in openid %}
+          'user': '{{ openid | replace(".id.fedoraproject.org", "") }}',
+          {% endif %}
+      });
+    </script>
+    {% endif %}
+
+  </body>
+</html>

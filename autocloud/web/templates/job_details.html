@@ -1,0 +1,42 @@
+{% extends "master.html" %}
+
+{% block body %}
+<div class="container">
+  <nav>
+    <ul class="pager">
+      <li class="previous{% if not prev_link %} disabled{% endif %}">
+        {% if prev_link %}
+          <a href="{{ prev_link }}"><span aria-hidden="true">&larr;</span> Previous</a>
+        {% endif %}
+      </li>
+      <li class="next{% if not next_link %} disabled{% endif %}">
+        {% if next_link %}
+          <a href="{{ next_link }}">Next <span aria-hidden="true">&rarr;</span></a>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Task ID</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Last updated</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for job_detail in job_details %}
+        <tr>
+          <td>{{ job_detail.taskid }}</td>
+          <td>{{ job_detail.status }}</td>
+          <td>{{ job_detail.created_on }}</td>
+          <td>{{ job_detail.last_updated }}</td>
+        </tr>
+      {% else %}
+        <tr><td>No results to display!</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
