@@ -14,3 +14,13 @@ python seed.py
 ```
 python autocloud/web/app.py
 ```
+
+## Test local fedmsg
+
+Add the dictionary to endpoints in /etc/fedmsg.d/endpoints.py
+
+```
+"__main__.localhost": [
+    "tcp://127.0.0.1:4321",
+]
+```
