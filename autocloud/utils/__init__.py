@@ -38,13 +38,13 @@ def produce_jobs(infox):
 
 def get_image_url(task_result):
     url_template = "{file_location}/{file_name}"
-    images_list = [f for f in result['files'] if f.endswith('.qcow2')]
+    images_list = [f for f in task_result['files'] if f.endswith('.qcow2')]
     if not images_list:
         return None
 
     file_name = images_list[0]
 
-    task_id = result['task_id']
+    task_id = task_result['task_id']
 
     # extension to base URL to exact file directory
     koji_url_extension = "/{}/{}".format(str(task_id)[3:], str(task_id))
