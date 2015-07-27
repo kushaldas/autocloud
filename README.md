@@ -24,3 +24,9 @@ Add the dictionary to endpoints in /etc/fedmsg.d/endpoints.py
     "tcp://127.0.0.1:4321",
 ]
 ```
+
+Change the topic in the fedmsg consumer hub to
+
+```
+topic = 'org.fedoraproject.dev.__main__.buildsys.task.state.change'
+```
