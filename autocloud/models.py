@@ -23,7 +23,8 @@ class JobDetails(Base):
         ('s', 'Success'),
         ('f', 'Failed'),
         ('a', 'Aborted'),
-        ('r', 'Running')
+        ('r', 'Running'),
+        ('q', 'Queued')
     )
     id = Column(Integer, primary_key=True)
     taskid = Column(String(255), nullable=False)
