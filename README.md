@@ -5,7 +5,7 @@
 ```
 pip install -r requirements.txt
 python setup.py develop
-sudo mkdir /etc/autocloud; sudo cp config/autocloud.cfg /etc/autocloud/autocloud.cfg
+sudo mkdir -p /etc/autocloud; sudo cp config/autocloud.cfg /etc/autocloud/autocloud.cfg
 python seed.py
 ```
 
