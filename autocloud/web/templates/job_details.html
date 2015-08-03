@@ -29,7 +29,21 @@
       {% for job_detail in job_details %}
         <tr>
           <td>{{ job_detail.taskid }}</td>
-          <td>{{ job_detail.status }}</td>
+          <td>
+              {% if job_detail.status == 's' %}
+                <span class="label label-success glyphicon glyphicon-ok">
+              {% elif job_detail.status in ('f', 'a') %}
+                <span class="label label-danger glyphicon glyphicon-remove">
+              {% elif job_detail.status == 'r' %}
+                <span class="label label-primary glyphicon glyphicon-refresh">
+              {% elif job_detail.status == 'q' %}
+                <span class="label label-info glyphicon glyphicon-time">
+              {% else %}
+                <span class="label label-default">
+              {% endif %}
+                  {{ job_detail.status }}
+              </span>
+          </td>
           <td>{{ job_detail.created_on }}</td>
           <td>{{ job_detail.last_updated }}</td>
         </tr>
