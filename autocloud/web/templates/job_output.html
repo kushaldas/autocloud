@@ -1,0 +1,8 @@
+{% extends "master.html" %}
+
+{% block body %}
+<div class="container">
+  <p>Output for task: {{ job.taskid }}</p>
+  <pre>{{ job.output }}</pre>
+<div>
+{% endblock %}

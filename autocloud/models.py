@@ -4,7 +4,7 @@ import os
 import sys
 import datetime
 
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -29,6 +29,7 @@ class JobDetails(Base):
     id = Column(Integer, primary_key=True)
     taskid = Column(String(255), nullable=False)
     status = Column(ChoiceType(STATUS_TYPES))
+    output = Column(Text, nullable=False, default='')
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
     last_updated = Column(DateTime, default=datetime.datetime.utcnow)
     user = Column(String(255), nullable=False)

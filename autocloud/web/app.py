@@ -8,6 +8,7 @@ from sqlalchemy import desc
 from autocloud.models import init_model
 from autocloud.models import JobDetails
 from autocloud.web.pagination import RangeBasedPagination
+from autocloud.web.utils import get_object_or_404
 import autocloud
 
 app = flask.Flask(__name__)
@@ -61,6 +62,12 @@ def job_details():
         next_link=next_link
     )
 
+
+@app.route('/jobs/<taskid>/output')
+def job_output(taskid):
+    job = get_object_or_404(session, JobDetails, JobDetails.taskid == taskid)
+    return flask.render_template(
+        'job_output.html', job=job)
 
 if __name__ == '__main__':
     session = init_model()
