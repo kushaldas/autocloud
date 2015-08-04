@@ -8,6 +8,7 @@ from sqlalchemy import desc
 from autocloud.models import init_model
 from autocloud.models import JobDetails
 from autocloud.web.pagination import RangeBasedPagination
+import autocloud
 
 app = flask.Flask(__name__)
 
@@ -63,5 +64,5 @@ def job_details():
 
 if __name__ == '__main__':
     session = init_model()
-    app.run(debug=True)
+    app.run(host=autocloud.HOST, port=autocloud.PORT, debug=autocloud.DEBUG)
 
