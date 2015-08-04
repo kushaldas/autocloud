@@ -27,9 +27,9 @@ class JobDetailsPagination(RangeBasedPagination):
     def order_queryset(self):
         if self.direction == 'next':
             self.queryset = self.queryset.order_by(desc(
-                JobDetails.created_on))
+                JobDetails.taskid))
         else:
-            self.queryset = self.queryset.order_by(JobDetails.created_on)
+            self.queryset = self.queryset.order_by(JobDetails.taskid)
 
     def filter_queryset(self):
         if self.page_key is None:
