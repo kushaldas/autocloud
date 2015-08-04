@@ -34,7 +34,8 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
             if url:
                 data = {
                     'buildid': builds[0],
-                    'image_url': url
+                    'image_url': url,
+                    'name': task_result['name']
                 }
                 image_files.append(data)
         elif len(builds) >= 2:
@@ -47,8 +48,9 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 url = get_image_url(result[0])
                 if url:
                     data = {
-                        'buildid': builds[0],
-                        'image_url': url
+                        'buildid': result[0]['task_id'],
+                        'image_url': url,
+                        'name': result[0]['name']
                     }
                     image_files.append(data)
 

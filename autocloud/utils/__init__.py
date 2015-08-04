@@ -4,9 +4,11 @@ from retask import Task
 from retask import Queue
 
 import autocloud
-import json
+from autocloud.models import init_model, JobDetails
 
+import json
 import logging
+
 log = logging.getLogger("fedmsg")
 
 def get_redis_config():
@@ -31,9 +33,21 @@ def produce_jobs(infox):
     jobqueue = Queue('jobqueue', config)
     jobqueue.connect()
 
+    session = init_model()
     for info in infox:
         task = Task(info)
         jobqueue.enqueue(task)
+
+        jd = JobDetails(
+            taskid=info['buildid'],
+            status='q',
+            created_on=timestamp,
+            user='admin',
+            last_updated=timestamp)
+        session.add(jd)
+    session.commit()
+
+
 
 
 def get_image_url(task_result):
