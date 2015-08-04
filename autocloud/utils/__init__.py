@@ -30,8 +30,8 @@ def produce_jobs(infox):
     """ Queue the jobs into jobqueue
     :args infox: list of dictionaries contains the image url and the buildid
     """
-    config = get_redis_config()
-    jobqueue = Queue('jobqueue', config)
+    #config = get_redis_config()
+    jobqueue = Queue('jobqueue')
     jobqueue.connect()
 
     session = init_model()
@@ -63,7 +63,7 @@ def get_image_url(task_result):
     task_id = task_result['task_id']
 
     # extension to base URL to exact file directory
-    koji_url_extension = "/{}/{}".format(str(task_id)[3:], str(task_id))
+    koji_url_extension = "/{}/{}".format(str(task_id)[4:], str(task_id))
     full_file_location = autocloud.BASE_KOJI_TASK_URL + koji_url_extension
 
     return url_template.format(file_location=full_file_location,
