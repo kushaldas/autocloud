@@ -6,6 +6,7 @@ from retask import Queue
 import autocloud
 from autocloud.models import init_model, JobDetails
 
+import datetime
 import json
 import logging
 
@@ -34,6 +35,7 @@ def produce_jobs(infox):
     jobqueue.connect()
 
     session = init_model()
+    timestamp = datetime.datetime.now()
     for info in infox:
         task = Task(info)
         jobqueue.enqueue(task)
