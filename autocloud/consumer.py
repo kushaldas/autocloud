@@ -20,6 +20,8 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         """ Takes a list of koji createImage task IDs and returns dictionary of
         build ids and image url corresponding to that build ids"""
 
+        _supported_images = ('Fedora-Cloud-Atomic', 'Fedora-Cloud-Base')
+
         for build in builds:
             log.info('Got Koji build {0}'.format(build))
 
@@ -31,11 +33,12 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         if len(builds) == 1:
             task_result = koji_session.getTaskResult(builds[0])
             url = get_image_url(task_result)
-            if url:
+            name = task_result.get('name')
+            if url and name in _supported_images:
                 data = {
                     'buildid': builds[0],
                     'image_url': url,
-                    'name': task_result['name']
+                    'name': name
                 }
                 image_files.append(data)
         elif len(builds) >= 2:
@@ -46,11 +49,12 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
             for result in results:
                 if not result: continue
                 url = get_image_url(result[0])
-                if url:
+                name = result[0].get('name')
+                if url and name in _supported_images:
                     data = {
                         'buildid': result[0]['task_id'],
                         'image_url': url,
-                        'name': result[0]['name']
+                        'name': name
                     }
                     image_files.append(data)
 
