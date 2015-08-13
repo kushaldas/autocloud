@@ -9,6 +9,8 @@ import autocloud
 import logging
 log = logging.getLogger("fedmsg")
 
+DEBUG = autocloud.DEBUG
+
 class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
     if DEBUG:
