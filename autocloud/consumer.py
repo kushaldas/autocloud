@@ -10,7 +10,12 @@ import logging
 log = logging.getLogger("fedmsg")
 
 class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
-    topic = 'org.fedoraproject.prod.buildsys.task.state.change'
+
+    if DEBUG:
+        topic = 'org.fedoraproject.dev.__main__.buildsys.task.state.change'
+    else:
+        topic = 'org.fedoraproject.prod.buildsys.task.state.change'
+
     config_key = 'autocloud.consumer.enabled'
 
     def __init__(self, *args, **kwargs):
