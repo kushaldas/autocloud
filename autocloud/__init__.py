@@ -17,7 +17,8 @@ KOJI_SERVER_URL = config.get('autocloud', 'koji_server_url')
 BASE_KOJI_TASK_URL = config.get('autocloud', 'base_koji_task_url')
 
 if DEBUG:
-    REDIS_CONFIG_FILEPATH = "{PROJECT_ROOT}/config/redis_server.json"
+    REDIS_CONFIG_FILEPATH = "{PROJECT_ROOT}/config/redis_server.json".format(
+        PROJECT_ROOT=PROJECT_ROOT)
 else:
     REDIS_CONFIG_FILEPATH = config.get('autocloud', 'redis_config_filepath')
 
