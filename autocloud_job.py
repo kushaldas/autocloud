@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from autocloud.models import init_model, JobDetails
+from autocloud.producer import publish_to_fedmsg
 import datetime
 import os
 import sys
@@ -9,24 +10,20 @@ import subprocess
 from retask import Queue
 
 
-def handle_err(session, data, out, err, ret_code):
+def handle_err(session, data, out, err):
     """
     Prints the details and exits.
     :param out:
     :param err:
-    :param ret_code:
     :return: None
     """
-    if ret_code:
-        # Update DB first.
-        data.status = u'f'
-        timestamp = datetime.datetime.now()
-        data.last_updated = timestamp
-        session.commit()
-        # Now print
-        print(out, err)
-        print("Return code: %d" % ret_code)
-        sys.exit(ret_code)
+    # Update DB first.
+    data.status = u'f'
+    timestamp = datetime.datetime.now()
+    data.last_updated = timestamp
+    session.commit()
+    # Now print
+    print(out, err)
 
 
 def system(cmd):
@@ -42,7 +39,7 @@ def system(cmd):
     returncode = ret.returncode
     return out, err, returncode
 
-def auto_job(taskid, image_url):
+def auto_job(task_data):
     """
     This fuction queues the job, and then executes the tests,
     updates the db as required.
@@ -54,6 +51,10 @@ def auto_job(taskid, image_url):
     # TODO:
     # We will have to update the job information on DB, rather
     # than creating it. But we will do it afterwards.
+
+    taskid = task_data.get('buildid')
+    image_url = task_data.get('image_url')
+    image_name = task_data.get('name')
 
     session = init_model()
     timestamp = datetime.datetime.now()
@@ -67,6 +68,10 @@ def auto_job(taskid, image_url):
         print(taskid, image_url)
         sys.exit(-1)
     session.commit()
+
+    publish_to_fedmsg(topic='image.running', image_url=image_url,
+                      image_name=image_name, status='running', buildid=taskid)
+
     # Now we have job queued, let us start the job.
 
     # Step 1: Download the image
@@ -104,13 +109,21 @@ sudo python -m unittest tunirtests.cloudservice.TestServiceAfter''')
         cmd = 'tunir --job fedora --config-dir /var/run/autocloud/ --stateless --atomic'
     # Now run tunir
     out, err, ret_code = system(cmd)
-    handle_err(session, data, out, err, ret_code)
+    if ret_code:
+        handle_err(session, data, out, err)
+        print("Return code: %d" % ret_code)
+        publish_to_fedmsg(topic='image.failed', image_url=image_url,
+                        image_name=image_name, status='failed', buildid=taskid)
+        return
+
     print(out)
     data.status = u's'
     timestamp = datetime.datetime.now()
     data.last_updated = timestamp
     session.commit()
 
+    publish_to_fedmsg(topic='image.success', image_url=image_url,
+                      image_name=image_name, status='success', buildid=taskid)
 
 def main():
     jobqueue = Queue('jobqueue')
@@ -118,7 +131,7 @@ def main():
     while True:
         task = jobqueue.wait()
         print(task.data)
-        auto_job(task.data['buildid'], task.data['image_url'])
+        auto_job(task.data)
 
 
 if __name__ == '__main__':
