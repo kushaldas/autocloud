@@ -3,6 +3,7 @@
 
 import fedmsg
 
+
 def publish_to_fedmsg(topic, image_url, image_name, status, build_id):
     """ Publish the message to fedmsg with image_url, image_name, status and
     build_id

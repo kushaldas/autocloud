@@ -11,6 +11,7 @@ log = logging.getLogger("fedmsg")
 
 DEBUG = autocloud.DEBUG
 
+
 class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
     if DEBUG:
@@ -55,8 +56,10 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 koji_session.getTaskResult(build)
             results = koji_session.multiCall()
             for result in results:
-                if not result: continue
-                task_relpath = koji.pathinfo.taskrelpath(int(result[0].get('task_id')))
+                if not result:
+                    continue
+                task_relpath = koji.pathinfo.taskrelpath(
+                    int(result[0].get('task_id')))
                 url = get_image_url(result[0].get('files'), task_relpath)
                 name = result[0].get('name')
                 if url and name in _supported_images:

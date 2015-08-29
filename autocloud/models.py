@@ -16,6 +16,7 @@ import autocloud
 
 Base = declarative_base()
 
+
 class JobDetails(Base):
     __tablename__ = 'job_details'
 
