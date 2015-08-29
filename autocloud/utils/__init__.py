@@ -12,19 +12,6 @@ import logging
 
 log = logging.getLogger("fedmsg")
 
-def get_redis_config():
-    """ Get the redis server configuration in json
-    """
-    config_path = autocloud.REDIS_CONFIG_FILEPATH
-
-    try:
-        with open(config_path) as fobj:
-            config = json.load(fobj)
-            return config
-    except Exception, e:
-        log.debug('get_redis_config', str(e), 'error')
-    return None
-
 
 def produce_jobs(infox):
     """ Queue the jobs into jobqueue
