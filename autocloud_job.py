@@ -7,7 +7,7 @@ import os
 import sys
 import json
 import subprocess
-from retask import Queue
+from retask.queue import Queue
 
 import logging
 log = logging.getLogger("fedmsg")

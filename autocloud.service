@@ -1,0 +1,11 @@
+[Unit]
+Description=Generic Autocloud service
+After=network.target redis.service fedmsg-hub.service
+
+[Service]
+ExecStart=/usr/sbin/autocloud_job
+Type=simple
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
