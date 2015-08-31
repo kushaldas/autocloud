@@ -6,6 +6,7 @@ requires = [
     'retask',
     'fedmsg',
     'jenkinsapi',
+    'flask'
 ]
 
 setup(
