@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from retask import Task
-from retask import Queue
+from retask.task import Task
+from retask.queue import Queue
 
 import autocloud
 from autocloud.models import init_model, JobDetails
+from autocloud.producer import publish_to_fedmsg
 
 import datetime
 import json
@@ -33,6 +34,10 @@ def produce_jobs(infox):
             user='admin',
             last_updated=timestamp)
         session.add(jd)
+        publish_to_fedmsg(topic='image.queued', image_url=info['image_url'],
+                          image_name=info['name'], status='queued',
+                          buildid=info['buildid'])
+
     session.commit()
 
 
