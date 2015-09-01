@@ -11,7 +11,7 @@ name = "{PROJECT_ROOT}/config/autocloud.cfg".format(
         PROJECT_ROOT=PROJECT_ROOT)
 
 if not os.path.exists(name):
-    name = '/etc/autocloud/autocloud.cfg')
+    name = '/etc/autocloud/autocloud.cfg'
 
 config.read(name)
 
