@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from autocloud.models import init_model, JobDetails
 from autocloud.producer import publish_to_fedmsg
