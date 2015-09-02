@@ -17,7 +17,7 @@ setup(
     author_email='',
     url='https://github.com/kushaldas/autocloud',
     install_requires=requires,
-    packages=['autocloud'],
+    packages=['autocloud', 'autocloud.web', 'autocloud.utils'],
     entry_points={
         'moksha.consumer': [
             "autocloud_consumer = autocloud.consumer:AutoCloudConsumer",
