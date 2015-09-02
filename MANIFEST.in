@@ -6,3 +6,5 @@ include LICENSE
 include autocloud_job
 include autocloud_job.py
 include autocloud.service
+recursive-include autocloud/web/static *
+recursive-include autocloud/web/templates *
