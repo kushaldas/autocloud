@@ -10,7 +10,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
-from sqlalchemy_utils import ChoiceType, database_exists, create_database
+from sqlalchemy_utils import ChoiceType
 
 import autocloud
 
@@ -39,10 +39,6 @@ class JobDetails(Base):
 def create_tables():
     # Create an engine that stores data in the local directory
     engine = create_engine(autocloud.SQLALCHEMY_URI)
-
-    # Create a database if the database does not exists.
-    if not database_exists(autocloud.SQLALCHEMY_URI):
-        create_database(autocloud.SQLALCHEMY_URI)
 
     # Create all tables in the engine. This is equivalent to "Create Table"
     # statements in raw SQL.
