@@ -7,8 +7,7 @@ import logging
 import sys
 logging.basicConfig(stream=sys.stderr)
 
-import autocloud.web.app
-application = autocloud.web.app
+from autocloud.web.app import app as application
 #application.debug = True  # Nope.  Be careful!
 
 # vim: set ft=python:

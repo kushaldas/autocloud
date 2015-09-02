@@ -13,6 +13,7 @@ import autocloud
 
 app = flask.Flask(__name__)
 
+session = init_model()
 
 class JobDetailsPagination(RangeBasedPagination):
 
@@ -70,5 +71,4 @@ def job_output(taskid):
         'job_output.html', job=job)
 
 if __name__ == '__main__':
-    session = init_model()
     app.run(host=autocloud.HOST, port=autocloud.PORT, debug=autocloud.DEBUG)
