@@ -39,7 +39,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         image_files = []  # list of full URLs of files
 
         if len(builds) == 1:
-            task_result = koji_session.getTaskResult(build[0])
+            task_result = koji_session.getTaskResult(builds[0])
             task_relpath = koji.pathinfo.taskrelpath(int(builds[0]))
             url = get_image_url(task_result.get('files'), task_relpath)
             name = task_result.get('name')
