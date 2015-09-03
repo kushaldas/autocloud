@@ -49,5 +49,3 @@ def init_model():
     engine = create_engine(autocloud.SQLALCHEMY_URI)
     scopedsession = scoped_session(sessionmaker(bind=engine))
     return scopedsession
-
-create_tables()
