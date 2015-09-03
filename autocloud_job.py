@@ -67,7 +67,6 @@ def auto_job(task_data):
     except Exception as err:
         log.error(err)
         log.error(taskid, image_url)
-        sys.exit(-1)
     session.commit()
 
     publish_to_fedmsg(topic='image.running', image_url=image_url,
