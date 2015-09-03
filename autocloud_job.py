@@ -9,7 +9,7 @@ import subprocess
 from retask.queue import Queue
 
 import logging
-log = logging.getLogger("fedmsg")
+log = logging.getLogger("fedmsg").addHandler(logging.NullHandler())
 
 
 def handle_err(session, data, out, err):
