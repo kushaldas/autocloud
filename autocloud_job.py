@@ -61,7 +61,7 @@ def auto_job(task_data):
     timestamp = datetime.datetime.now()
     data = None
     try:
-        data = session.query(JobDetails).filter(JobDetails.taskid == taskid).first()
+        data = session.query(JobDetails).filter(JobDetails.taskid == str(taskid)).first()
         data.status = u'r'
         data.last_updated = timestamp
     except Exception as err:
