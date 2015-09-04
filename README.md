@@ -15,13 +15,16 @@ python seed.py
 python autocloud/web/app.py
 ```
 
-## Test local fedmsg
+## fedmsg config
 
 Add the dictionary to endpoints in /etc/fedmsg.d/endpoints.py
 
 ```
-"__main__.localhost": [
-    "tcp://127.0.0.1:4321",
+"__main__.fedora-build": [
+     "tcp://127.0.0.1:4321",
+],
+"autocloud.fedora-build": [
+     "tcp://127.0.0.1:4322",
 ]
 ```
 

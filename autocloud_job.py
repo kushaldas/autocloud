@@ -24,7 +24,7 @@ def handle_err(session, data, out, err):
     timestamp = datetime.datetime.now()
     data.last_updated = timestamp
     session.commit()
-    log.debug(out, err)
+    log.debug("%s: %s", out, err)
 
 
 def system(cmd):
@@ -77,7 +77,12 @@ def auto_job(task_data):
     # Step 1: Download the image
     basename = os.path.basename(image_url)
     out, err, ret_code = system('wget %s -O /var/run/autocloud/%s' % (image_url, basename))
-    handle_err(session, data, out, err)
+    if ret_code:
+        handle_err(session, data, out, err)
+        log.debug("Return code: %d" % ret_code)
+        publish_to_fedmsg(topic='image.failed', image_url=image_url,
+                        image_name=image_name, status='failed', buildid=taskid)
+        return
 
     # Step 2: Create the conf file with correct image path.
     conf = {"image": "file:///var/run/autocloud/%s" % basename,
