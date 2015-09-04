@@ -65,8 +65,8 @@ def auto_job(task_data):
         data.status = u'r'
         data.last_updated = timestamp
     except Exception as err:
-        log.error(err)
-        log.error(taskid, image_url)
+        log.error("%s" % err)
+        log.error("%s: %s", taskid, image_url)
     session.commit()
 
     publish_to_fedmsg(topic='image.running', image_url=image_url,
@@ -77,7 +77,7 @@ def auto_job(task_data):
     # Step 1: Download the image
     basename = os.path.basename(image_url)
     out, err, ret_code = system('wget %s -O /var/run/autocloud/%s' % (image_url, basename))
-    handle_err(session, data, out, err, ret_code)
+    handle_err(session, data, out, err)
 
     # Step 2: Create the conf file with correct image path.
     conf = {"image": "file:///var/run/autocloud/%s" % basename,
@@ -116,10 +116,11 @@ sudo python -m unittest tunirtests.cloudservice.TestServiceAfter''')
                         image_name=image_name, status='failed', buildid=taskid)
         return
 
-    log.debug(out)
+    com_text = out[out.find('/usr/bin/qemu-kvm'):]
     data.status = u's'
     timestamp = datetime.datetime.now()
     data.last_updated = timestamp
+    data.output = com_text
     session.commit()
 
     publish_to_fedmsg(topic='image.success', image_url=image_url,
@@ -130,7 +131,7 @@ def main():
     jobqueue.connect()
     while True:
         task = jobqueue.wait()
-        log.debug(task.data)
+        log.debug("%s", task.data)
         auto_job(task.data)
 
 
