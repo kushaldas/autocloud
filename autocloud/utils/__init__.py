@@ -42,8 +42,9 @@ def produce_jobs(infox):
 
 
 def get_image_url(task_list_output, task_relpath):
+    supported_image_ext = ('.qcow2', '.vagrant-libvirt.box')
     url_template = "{file_location}/{file_name}"
-    images_list = [f for f in task_list_output if f.endswith('.qcow2')]
+    images_list = [f for f in task_list_output if f.endswith(supported_image_ext)]
     if not images_list:
         return None
 
