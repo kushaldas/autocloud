@@ -40,6 +40,20 @@ def system(cmd):
     returncode = ret.returncode
     return out, err, returncode
 
+
+def image_cleanup(image_path):
+    """
+    Delete the image if it is processed or if there is any exception occur
+
+    :param basename: Absoulte path for image
+    """
+    if os.path.exists(image_path):
+        try:
+            os.remove(image_path)
+        except OSError as e:
+            log.error('Error: %s - %s.', e.filename, e.strerror)
+
+
 def auto_job(task_data):
     """
     This fuction queues the job, and then executes the tests,
@@ -76,8 +90,10 @@ def auto_job(task_data):
 
     # Step 1: Download the image
     basename = os.path.basename(image_url)
-    out, err, ret_code = system('wget %s -O /var/run/autocloud/%s' % (image_url, basename))
+    image_path = '/var/run/autocloud/%s' % basename
+    out, err, ret_code = system('wget %s -O %s' % (image_url, image_path))
     if ret_code:
+        image_cleanup(image_path)
         handle_err(session, data, out, err)
         log.debug("Return code: %d" % ret_code)
         publish_to_fedmsg(topic='image.failed', image_url=image_url,
@@ -115,11 +131,14 @@ sudo python -m unittest tunirtests.cloudservice.TestServiceAfter''')
     # Now run tunir
     out, err, ret_code = system(cmd)
     if ret_code:
+        image_cleanup(image_path)
         handle_err(session, data, out, err)
         log.debug("Return code: %d" % ret_code)
         publish_to_fedmsg(topic='image.failed', image_url=image_url,
                         image_name=image_name, status='failed', buildid=taskid)
         return
+    else:
+        image_cleanup(image_path)
 
     com_text = out[out.find('/usr/bin/qemu-kvm'):]
     data.status = u's'
