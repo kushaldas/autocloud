@@ -28,7 +28,9 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         """ Takes a list of koji createImage task IDs and returns dictionary of
         build ids and image url corresponding to that build ids"""
 
-        _supported_images = ('Fedora-Cloud-Atomic', 'Fedora-Cloud-Base')
+        _supported_images = ('Fedora-Cloud-Atomic', 'Fedora-Cloud-Base',
+                             'Fedora-Cloud-Base-Vagrant',
+                             'Fedora-Cloud-Atomic-Vagrant')
 
         for build in builds:
             log.info('Got Koji build {0}'.format(build))
@@ -40,29 +42,35 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
         if len(builds) == 1:
             task_result = koji_session.getTaskResult(builds[0])
-            task_relpath = koji.pathinfo.taskrelpath(int(builds[0]))
-            url = get_image_url(task_result.get('files'), task_relpath)
             name = task_result.get('name')
-            if url and name in _supported_images:
-                data = {
-                    'buildid': builds[0],
-                    'image_url': url,
-                    'name': name
-                }
-                image_files.append(data)
+            if name in _supported_images:
+                task_relpath = koji.pathinfo.taskrelpath(int(builds[0]))
+                url = get_image_url(task_result.get('files'), task_relpath)
+                if url:
+                    data = {
+                        'buildid': builds[0],
+                        'image_url': url,
+                        'name': name
+                    }
+                    image_files.append(data)
         elif len(builds) >= 2:
             koji_session.multicall = True
             for build in builds:
                 koji_session.getTaskResult(build)
             results = koji_session.multiCall()
             for result in results:
+
                 if not result:
                     continue
+
+                name = result[0].get('name')
+                if name not in _supported_images:
+                    continue
+
                 task_relpath = koji.pathinfo.taskrelpath(
                     int(result[0].get('task_id')))
                 url = get_image_url(result[0].get('files'), task_relpath)
-                name = result[0].get('name')
-                if url and name in _supported_images:
+                if url:
                     data = {
                         'buildid': result[0]['task_id'],
                         'image_url': url,
