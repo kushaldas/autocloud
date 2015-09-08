@@ -6,10 +6,15 @@
 Welcome to Autocloud's documentation!
 =====================================
 
+Autocloud is part of Fedora Project where we are using it to test Fedora Cloud image
+build on Koji. It listens to fedmsg, and pushes new messages on the status of the tests.
+
 Contents:
 
 .. toctree::
    :maxdepth: 2
+
+   building
 
 
 
