@@ -21,6 +21,7 @@ def handle_err(session, data, out, err):
     """
     # Update DB first.
     data.status = u'f'
+    data.output = "%s: %s" % (out, err)
     timestamp = datetime.datetime.now()
     data.last_updated = timestamp
     session.commit()
