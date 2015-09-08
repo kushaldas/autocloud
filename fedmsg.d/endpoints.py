@@ -25,19 +25,9 @@ config = dict(
     # messages.  fedmsg.init(...) requires that a 'name' argument be passed
     # to it which corresponds with one of the keys in this dict.
     endpoints={
-        # These are here so your local box can listen to the upstream
-        # infrastructure's bus.  Cool, right?  :)
-        "fedora-infrastructure": [
-            "tcp://hub.fedoraproject.org:9940",
-            #"tcp://stg.fedoraproject.org:9940",
+        "autocloud.%s" % hostname: [
+            "tcp://127.0.0.1:4322",
+            "tcp://127.0.0.1:4323",
         ],
-
-        # For other, more 'normal' services, fedmsg will try to guess the
-        # name of it's calling module to determine which endpoint definition
-        # to use.  This can be overridden by explicitly providing the name in
-        # the initial call to fedmsg.init(...).
-        #"bodhi.%s" % hostname: ["tcp://127.0.0.1:3001"],
-        #"fas.%s" % hostname: ["tcp://127.0.0.1:3002"],
-        #"fedoratagger.%s" % hostname: ["tcp://127.0.0.1:3003"],
     },
 )
