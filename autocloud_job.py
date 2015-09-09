@@ -41,6 +41,19 @@ def system(cmd):
     returncode = ret.returncode
     return out, err, returncode
 
+def refresh_storage_pool():
+    '''Refreshes libvirt storage pool.
+
+    http://kushaldas.in/posts/storage-volume-error-in-libvirt-with-vagrant.html
+    '''
+    out, err, retcode = system('virsh pool-list')
+    lines = out.split('\n')
+    if len(lines) > 2:
+    for line in lines[2:]:
+        words = line.split()
+        if len(words) == 3:
+            if words[1] == 'active':
+                system('virsh pool-refresh {0}'.format(words[0]))
 
 def image_cleanup(image_path):
     """
@@ -71,6 +84,7 @@ def auto_job(task_data):
     taskid = task_data.get('buildid')
     image_url = task_data.get('image_url')
     image_name = task_data.get('name')
+    job_type = 'vm'
 
     session = init_model()
     timestamp = datetime.datetime.now()
@@ -102,32 +116,35 @@ def auto_job(task_data):
         return
 
     # Step 2: Create the conf file with correct image path.
-    conf = {"image": "file:///var/run/autocloud/%s" % basename,
+    if basename.find('libvirt') == -1:
+        conf = {"image": "file:///var/run/autocloud/%s" % basename,
+                "name": "fedora",
+                "password": "passw0rd",
+                "ram": 2048,
+                "type": "vm",
+                "user": "fedora"}
+
+    else: # We now have a Vagrant job.
+        conf = {
             "name": "fedora",
-            "password": "passw0rd",
+            "type": "vagrant",
+            "image": "file:///var/run/autocloud/%s" % basename,
             "ram": 2048,
-            "type": "vm",
-            "user": "fedora"}
+            "user": "vagrant",
+            "port": "22"
+        }
+        job_type = 'vagrant'
+
+        #Now let us refresh the storage pool
+        refresh_storage_pool()
+
     with open('/var/run/autocloud/fedora.json', 'w') as fobj:
         fobj.write(json.dumps(conf))
 
-
-    with open('/var/run/autocloud/fedora.txt', 'w') as fobj:
-        fobj.write('''curl -O https://kushal.fedorapeople.org/tunirtests.tar.gz
-tar -xzvf tunirtests.tar.gz
-sudo python -m unittest tunirtests.cloudtests
-sudo systemctl stop crond.service
-@@ sudo systemctl disable crond.service
-@@ sudo reboot
-SLEEP 30
-sudo python -m unittest tunirtests.cloudservice.TestServiceManipulation
-@@ sudo reboot
-SLEEP 30
-sudo python -m unittest tunirtests.cloudservice.TestServiceAfter''')
-
+    system('cp /etc/autocloud/fedora.txt /var/run/autocloud/fedora.txt')
 
     cmd = 'tunir --job fedora --config-dir /var/run/autocloud/ --stateless'
-    if basename.find('Atomic') != -1:
+    if basename.find('Atomic') != -1 and job_type == 'vm':
         cmd = 'tunir --job fedora --config-dir /var/run/autocloud/ --stateless --atomic'
     # Now run tunir
     out, err, ret_code = system(cmd)
@@ -141,7 +158,10 @@ sudo python -m unittest tunirtests.cloudservice.TestServiceAfter''')
     else:
         image_cleanup(image_path)
 
-    com_text = out[out.find('/usr/bin/qemu-kvm'):]
+    if job_type == 'vm':
+        com_text = out[out.find('/usr/bin/qemu-kvm'):]
+    else:
+        com_text = out
     data.status = u's'
     timestamp = datetime.datetime.now()
     data.last_updated = timestamp
