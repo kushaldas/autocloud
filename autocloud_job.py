@@ -49,11 +49,11 @@ def refresh_storage_pool():
     out, err, retcode = system('virsh pool-list')
     lines = out.split('\n')
     if len(lines) > 2:
-    for line in lines[2:]:
-        words = line.split()
-        if len(words) == 3:
-            if words[1] == 'active':
-                system('virsh pool-refresh {0}'.format(words[0]))
+        for line in lines[2:]:
+            words = line.split()
+            if len(words) == 3:
+                if words[1] == 'active':
+                    system('virsh pool-refresh {0}'.format(words[0]))
 
 def image_cleanup(image_path):
     """
