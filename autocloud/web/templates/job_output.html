@@ -1,8 +1,9 @@
 {% extends "master.html" %}
 
 {% block body %}
+<a class="pull-right" href="{{ url_for('job_details') }}">Go to job details</a>
 <div class="container">
   <p>Output for task: {{ job.taskid }}</p>
   <pre>{{ job.output }}</pre>
-<div>
+</div>
 {% endblock %}
