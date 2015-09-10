@@ -3,6 +3,7 @@ Description=Generic Autocloud service
 After=network.target redis.service fedmsg-hub.service
 
 [Service]
+Environment="HOME=/root"
 ExecStart=/usr/sbin/autocloud_job
 Type=simple
 Restart=on-failure
