@@ -1,16 +1,31 @@
 # -*- coding: utf-8 -*-
 from autocloud.models import init_model, JobDetails
 from autocloud.producer import publish_to_fedmsg
+from autocloud import TIMEOUT
 import datetime
 import os
 import sys
 import json
 import subprocess
+import signal
+import time
 from retask.queue import Queue
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
+
+def get_pid(process_name):
+    """
+    Return process pid
+    """
+    return subprocess.check_output(["pidof", process_name])
+
+
+def handler(signum, frame):
+   log.debug("signal handler called with signal %s" signum
+   pid = int(get_pid('gedit').strip())
+   os.kill(pid, signal.SIGKILL)
 
 def handle_err(session, data, out, err):
     """
@@ -147,6 +162,8 @@ def auto_job(task_data):
     if basename.find('Atomic') != -1 and job_type == 'vm':
         cmd = 'tunir --job fedora --config-dir /var/run/autocloud/ --stateless --atomic'
     # Now run tunir
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(TIMEOUT)
     out, err, ret_code = system(cmd)
     if ret_code:
         image_cleanup(image_path)
@@ -157,6 +174,7 @@ def auto_job(task_data):
         return
     else:
         image_cleanup(image_path)
+    signal.alarm(0) # unset alarm
 
     if job_type == 'vm':
         com_text = out[out.find('/usr/bin/qemu-kvm'):]
