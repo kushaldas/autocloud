@@ -12,7 +12,7 @@ log = logging.getLogger("fedmsg")
 DEBUG = autocloud.DEBUG
 
 
-class BaseAutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
+class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
     if DEBUG:
         topic = 'org.fedoraproject.dev.__main__.buildsys.task.state.change'
