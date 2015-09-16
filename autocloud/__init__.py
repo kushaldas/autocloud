@@ -28,3 +28,5 @@ PORT = int(config.get('autocloud', 'port')) or 5000
 DEBUG = config.get('autocloud', 'debug')
 
 SQLALCHEMY_URI = config.get('sqlalchemy', 'uri')
+
+VIRTUALBOX = config.get('autocloud', 'virtualbox')
