@@ -28,9 +28,11 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         """ Takes a list of koji createImage task IDs and returns dictionary of
         build ids and image url corresponding to that build ids"""
 
-        _supported_images = ('Fedora-Cloud-Atomic', 'Fedora-Cloud-Base',
-                             'Fedora-Cloud-Base-Vagrant',
-                             'Fedora-Cloud-Atomic-Vagrant')
+        if autocloud.VIRTUALBOX:
+            _supported_images = ('Fedora-Cloud-Base-Vagrant',
+                                'Fedora-Cloud-Atomic-Vagrant')
+        else:
+            _supported_images = ('Fedora-Cloud-Atomic', 'Fedora-Cloud-Base')
 
         for build in builds:
             log.info('Got Koji build {0}'.format(build))
