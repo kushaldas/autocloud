@@ -1,0 +1,61 @@
+Setup instruction on Fedora
+============================
+
+::
+
+    $ sudo dnf install autolcoud
+
+The above command will install the latest package from the repo. You may want to install
+vagrant-libvirt if you will execute libvirt based tests on the system.
+
+
+Start the redis server
+-----------------------
+
+::
+
+    $ sudo systemctl start redis
+
+
+Enable ports for tunir
+-----------------------
+
+Autocloud uses tunir to execute the tests on a given image. We will have to do the follow setup for tunir
+to execute in a proper way.
+
+::
+
+    $ python /usr/share/tunir*/createports.py
+
+Configure the dstabase URI
+---------------------------
+
+In */etc/autocloud/autocloud.cfg* file please configure the sqlalchemy uri value. For our work, we are using 
+postgres as database.
+
+Start fedmsg-hub service
+--------------------------
+
+This service listens for new koji builds, and creates the database entry and corresponding task in the queue.
+
+::
+
+    $ sudo systemctl start fedmsg-hub
+
+Start autocloud service
+-------------------------
+
+This service will listen for new task in the queue, and execute the tasks.
+
+::
+
+    $ sudo systemctl start autocloud
+
+Starting the web dashboard
+----------------------------
+
+This is the web dashboard for the Autocloud, we use httpd for the this.
+
+::
+
+    $ sudo systemctl start httpd
