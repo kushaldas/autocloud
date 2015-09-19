@@ -7,4 +7,9 @@ First you can git clone the repo from github.
 
     $ git clone https://github.com/kushaldas/autocloud.git
 
+You should also install vagrant-libvirt from Fedora repo.
+::
+
+    $ sudo dnf install vagrant-libvirt -y
+
 
