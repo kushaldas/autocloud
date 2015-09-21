@@ -67,6 +67,13 @@ def image_cleanup(image_path):
         except OSError as e:
             log.error('Error: %s - %s.', e.filename, e.strerror)
 
+def create_dirs():
+    """
+    Creates the runtime dirs
+    """
+    system('mkdir -p /var/run/tunir')
+    system('mkdir -p /var/run/autocloud')
+
 
 def auto_job(task_data):
     """
@@ -86,6 +93,9 @@ def auto_job(task_data):
     image_url = task_data.get('image_url')
     image_name = task_data.get('name')
     job_type = 'vm'
+
+    # Just to make sure that we have runtime dirs
+    create_dirs()
 
     session = init_model()
     timestamp = datetime.datetime.now()
