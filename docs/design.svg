@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="design.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.24748737"
+     inkscape:cx="-1128.2299"
+     inkscape:cy="-2259.2652"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1366"
+     inkscape:window-height="704"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g4302"
+       inkscape:export-xdpi="14.02"
+       inkscape:export-ydpi="14.02"
+       transform="translate(0,20.788273)">
+      <g
+         transform="matrix(0.83007713,0,0,0.83007713,-26.094457,25.706698)"
+         id="g4201">
+        <rect
+           style="opacity:1;fill:#0054ff;fill-opacity:1;stroke:#3c6eb4;stroke-width:5.51140022;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+           id="rect4148"
+           width="1572.3997"
+           height="524.51556"
+           x="-103.25262"
+           y="-83.750633"
+           ry="80.447174" />
+      </g>
+      <rect
+         style="opacity:1;fill:#cccccc;fill-opacity:1;stroke:#3c6eb4;stroke-width:7.51966763;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+         id="rect4150"
+         width="752.79877"
+         height="199.53706"
+         x="164.40501"
+         y="74.112869"
+         ry="83.896263" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4152"
+         y="202.26872"
+         x="280.06677"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:72.67156219px;line-height:125%;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="202.26872"
+           x="280.06677"
+           id="tspan4154"
+           sodipodi:role="line">RETASK QUEUE</tspan></text>
+    </g>
+    <g
+       id="g4282"
+       transform="translate(-286.88332,-26.263966)"
+       inkscape:export-xdpi="14.02"
+       inkscape:export-ydpi="14.02">
+      <rect
+         ry="142.85715"
+         y="-244.78065"
+         x="-1785.7142"
+         height="931.42859"
+         width="1308.5714"
+         id="rect3336"
+         style="opacity:1;fill:#ffe680;fill-opacity:1;stroke:#3c6eb4;stroke-width:6.69999981;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0" />
+      <g
+         transform="translate(-56.937378,-844.48753)"
+         id="g4161">
+        <rect
+           ry="74.751305"
+           y="780.7395"
+           x="-1409.8618"
+           height="177.78688"
+           width="670.74133"
+           id="rect4142"
+           style="opacity:1;fill:#999999;fill-opacity:1;stroke:#3c6eb4;stroke-width:6.69999981;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:56px;line-height:125%;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="-1348.749"
+           y="891.50793"
+           id="text4144"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan4146"
+             x="-1348.749"
+             y="891.50793">FEDMSG CONSUMER</tspan></text>
+      </g>
+      <rect
+         style="opacity:1;fill:#999999;fill-opacity:1;stroke:#3c6eb4;stroke-width:9.55991554;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+         id="rect4166"
+         width="934.56171"
+         height="259.77979"
+         x="-1598.7094"
+         y="201.22346"
+         ry="109.22559" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4168"
+         y="311.42584"
+         x="-1498.1628"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:56px;line-height:125%;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="311.42584"
+           x="-1498.1628"
+           id="tspan4170"
+           sodipodi:role="line">Listens to Koji createImage</tspan><tspan
+           id="tspan4172"
+           y="381.42584"
+           x="-1498.1628"
+           sodipodi:role="line">task completion</tspan></text>
+    </g>
+    <g
+       id="g4337"
+       inkscape:export-xdpi="14.02"
+       inkscape:export-ydpi="14.02"
+       transform="translate(0,-54.548238)">
+      <rect
+         style="opacity:1;fill:#00ae00;fill-opacity:1;stroke:#3c6eb4;stroke-width:6.69999981;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+         id="rect4138"
+         width="1308.5714"
+         height="931.42859"
+         x="1747.9412"
+         y="-216.49638"
+         ry="142.85715" />
+      <g
+         id="g4332">
+        <rect
+           ry="99.334839"
+           y="131.09"
+           x="1962.8705"
+           height="236.25583"
+           width="878.71289"
+           id="rect4183"
+           style="opacity:1;fill:#b3b3b3;fill-opacity:1;stroke:#3c6eb4;stroke-width:8.84020138;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:75.09654236px;line-height:125%;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="2065.6125"
+           y="278.58917"
+           id="text4185"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan4187"
+             x="2065.6125"
+             y="278.58917">AutoCloud service</tspan></text>
+      </g>
+    </g>
+    <g
+       id="g4315"
+       inkscape:export-xdpi="14.02"
+       inkscape:export-ydpi="14.02">
+      <rect
+         style="opacity:1;fill:#ffe680;fill-opacity:1;stroke:#3c6eb4;stroke-width:8.02571201;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+         id="rect4204"
+         width="1181.9868"
+         height="1479.6259"
+         x="-104.15754"
+         y="1020.5933"
+         ry="226.93648" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4206"
+         y="1825.8287"
+         x="82.688354"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:167.48161316px;line-height:125%;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="1825.8287"
+           x="82.688354"
+           id="tspan4208"
+           sodipodi:role="line">DATABASE</tspan></text>
+    </g>
+    <g
+       transform="matrix(-0.52361583,0,0,-0.52361583,-172.6419,297.30004)"
+       id="Ebene_1"
+       inkscape:export-xdpi="14.02"
+       inkscape:export-ydpi="14.02">
+      <polygon
+         points="902.25049,222.98633 233.17773,222.98633 233.17773,364.71875 0,182.35938 233.17773,0 233.17773,141.73242 902.25049,141.73242 902.25049,222.98633 "
+         id="path2050" />
+    </g>
+    <g
+       id="g4293"
+       transform="matrix(-0.52361583,0,0,-0.52361583,1714.3231,289.21882)"
+       inkscape:export-xdpi="14.02"
+       inkscape:export-ydpi="14.02">
+      <polygon
+         id="polygon4295"
+         points="233.17773,364.71875 0,182.35938 233.17773,0 233.17773,141.73242 902.25049,141.73242 902.25049,222.98633 902.25049,222.98633 233.17773,222.98633 " />
+    </g>
+    <g
+       id="g4309"
+       transform="matrix(0.4441133,-0.67159681,0.67159681,0.4441133,1219.8333,1307.8074)"
+       inkscape:export-xdpi="14.02"
+       inkscape:export-ydpi="14.02">
+      <polygon
+         id="polygon4311"
+         points="233.17773,141.73242 902.25049,141.73242 902.25049,222.98633 902.25049,222.98633 233.17773,222.98633 233.17773,364.71875 0,182.35938 233.17773,0 " />
+    </g>
+    <g
+       id="g4174">
+      <rect
+         ry="214.97562"
+         y="2971.6777"
+         x="-1337.4594"
+         height="1401.6411"
+         width="3947.5957"
+         id="rect4313"
+         style="opacity:1;fill:#cccccc;fill-opacity:1;stroke:#3c6eb4;stroke-width:14.27532673;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4320"
+         y="3702.239"
+         x="-871.69452"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:108.57243347px;line-height:125%;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="3702.239"
+           x="-871.69452"
+           id="tspan4322"
+           sodipodi:role="line">Flask Application based web service running on Apache</tspan></text>
+    </g>
+    <g
+       id="g4412"
+       transform="matrix(-0.00422254,-0.43496155,0.43496155,-0.00422254,390.72729,2944.7785)"
+       inkscape:export-xdpi="14.02"
+       inkscape:export-ydpi="14.02">
+      <polygon
+         id="polygon4414"
+         points="233.17773,0 233.17773,141.73242 902.25049,141.73242 902.25049,222.98633 902.25049,222.98633 233.17773,222.98633 233.17773,364.71875 0,182.35938 " />
+    </g>
+  </g>
+</svg>
