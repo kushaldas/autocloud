@@ -33,6 +33,12 @@ Configure the dstabase URI
 In */etc/autocloud/autocloud.cfg* file please configure the sqlalchemy uri value. For our work, we are using 
 postgres as database.
 
+Configure for the vagrant-virtualbox jobs
+------------------------------------------
+
+In */etc/autocloud/autocloud.cfg* file set *virtualbox* value to True. If you want to know how to setup virtualbox on the system, please refer to `this guide <http://tunir.readthedocs.org/en/latest/vagrant.html#how-to-install-virtualbox-and-vagrant>`_.
+
+
 Start fedmsg-hub service
 --------------------------
 
