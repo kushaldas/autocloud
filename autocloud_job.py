@@ -82,6 +82,7 @@ def auto_job(task_data):
     # than creating it. But we will do it afterwards.
 
     taskid = task_data.get('buildid')
+    job_id = task_data.get('job_id')
     image_url = task_data.get('image_url')
     image_name = task_data.get('name')
     job_type = 'vm'
@@ -90,7 +91,7 @@ def auto_job(task_data):
     timestamp = datetime.datetime.now()
     data = None
     try:
-        data = session.query(JobDetails).filter(JobDetails.taskid == str(taskid)).first()
+        data = session.query(JobDetails).get(str(job_id))
         data.status = u'r'
         data.last_updated = timestamp
     except Exception as err:
