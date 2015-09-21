@@ -16,6 +16,7 @@ Contents:
 
    building
    setup
+   design
 
 
 
