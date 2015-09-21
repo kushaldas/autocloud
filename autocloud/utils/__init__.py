@@ -33,6 +33,7 @@ def produce_jobs(infox):
         session.add(jd)
         session.commit()
 
+        info.update({'job_id': jd.id})
         task = Task(info)
         jobqueue.enqueue(task)
 
