@@ -24,9 +24,6 @@ def produce_jobs(infox):
     session = init_model()
     timestamp = datetime.datetime.now()
     for info in infox:
-        task = Task(info)
-        jobqueue.enqueue(task)
-
         jd = JobDetails(
             taskid=info['buildid'],
             status='q',
@@ -34,11 +31,15 @@ def produce_jobs(infox):
             user='admin',
             last_updated=timestamp)
         session.add(jd)
+        session.commit()
+
+        task = Task(info)
+        jobqueue.enqueue(task)
+
         publish_to_fedmsg(topic='image.queued', image_url=info['image_url'],
                           image_name=info['name'], status='queued',
                           buildid=info['buildid'])
 
-    session.commit()
 
 
 def get_image_url(task_list_output, task_relpath):
