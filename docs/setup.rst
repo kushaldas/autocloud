@@ -20,16 +20,16 @@ The above command will install the latest package from the repo. You may want to
 vagrant-libvirt if you will execute libvirt based tests on the system.
 
 
-Start the redis server in both backend servers
-------------------------------------------------
+Start the redis server in both autocloud-back0* systems
+-------------------------------------------------------
 
 ::
 
     $ sudo systemctl start redis
 
 
-Enable ports for tunir in both backend servers
------------------------------------------------
+Enable ports for tunir in both autocloud-back0* systems
+--------------------------------------------------------
 
 Autocloud uses tunir to execute the tests on a given image. We will have to do the follow setup for tunir
 to execute in a proper way.
