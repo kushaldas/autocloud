@@ -1,6 +1,17 @@
 Setup instruction on Fedora
 ============================
 
+The following image explains the deployment plan of autocloud.
+
+.. image:: deployment.png
+
+We have two bare metal server autocloud-back01, and autocloud-back02, the later one is only
+used for vagrant-virtualbox based images. We also have two load balanced vms running the web
+frontend.
+
+Install the autocloud package
+------------------------------
+
 ::
 
     $ sudo dnf install autolcoud
