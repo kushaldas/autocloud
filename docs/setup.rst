@@ -38,7 +38,7 @@ to execute in a proper way.
 
     $ python /usr/share/tunir*/createports.py
 
-Configure the dstabase URI
+Configure the database URI
 ---------------------------
 
 In */etc/autocloud/autocloud.cfg* file please configure the sqlalchemy uri value. For our work, we are using 
