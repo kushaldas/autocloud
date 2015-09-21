@@ -9,8 +9,8 @@ We have two bare metal server autocloud-back01, and autocloud-back02, the later 
 used for vagrant-virtualbox based images. We also have two load balanced vms running the web
 frontend.
 
-Install the autocloud package
-------------------------------
+Install the autocloud package in all systems
+--------------------------------------------
 
 ::
 
@@ -20,16 +20,16 @@ The above command will install the latest package from the repo. You may want to
 vagrant-libvirt if you will execute libvirt based tests on the system.
 
 
-Start the redis server
------------------------
+Start the redis server in both backend servers
+------------------------------------------------
 
 ::
 
     $ sudo systemctl start redis
 
 
-Enable ports for tunir
------------------------
+Enable ports for tunir in both backend servers
+-----------------------------------------------
 
 Autocloud uses tunir to execute the tests on a given image. We will have to do the follow setup for tunir
 to execute in a proper way.
@@ -38,20 +38,20 @@ to execute in a proper way.
 
     $ python /usr/share/tunir*/createports.py
 
-Configure the database URI
----------------------------
+Configure the database URI in all systems
+------------------------------------------
 
 In */etc/autocloud/autocloud.cfg* file please configure the sqlalchemy uri value. For our work, we are using 
 postgres as database.
 
-Configure for the vagrant-virtualbox jobs
-------------------------------------------
+Configure for the vagrant-virtualbox jobs in autocloud-back02
+---------------------------------------------------------------
 
 In */etc/autocloud/autocloud.cfg* file set *virtualbox* value to True. If you want to know how to setup virtualbox on the system, please refer to `this guide <http://tunir.readthedocs.org/en/latest/vagrant.html#how-to-install-virtualbox-and-vagrant>`_.
 
 
-Start fedmsg-hub service
---------------------------
+Start fedmsg-hub service in autocloud-back0* systems
+-----------------------------------------------------
 
 This service listens for new koji builds, and creates the database entry and corresponding task in the queue.
 
@@ -59,8 +59,8 @@ This service listens for new koji builds, and creates the database entry and cor
 
     $ sudo systemctl start fedmsg-hub
 
-Start autocloud service
--------------------------
+Start autocloud service in autocloud-back0* systems
+----------------------------------------------------
 
 This service will listen for new task in the queue, and execute the tasks.
 
@@ -68,8 +68,8 @@ This service will listen for new task in the queue, and execute the tasks.
 
     $ sudo systemctl start autocloud
 
-Starting the web dashboard
-----------------------------
+Starting the web dashboard in autocloud-web0* systems
+-------------------------------------------------------
 
 This is the web dashboard for the Autocloud, we use httpd for the this.
 
