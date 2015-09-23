@@ -9,12 +9,12 @@ We have two bare metal server autocloud-back01, and autocloud-back02, the later 
 used for vagrant-virtualbox based images. We also have two load balanced vms running the web
 frontend.
 
-Install the autocloud package in all systems
---------------------------------------------
+Install the autocloud-common package in all systems
+----------------------------------------------------
 
 ::
 
-    $ sudo dnf install autolcoud
+    $ sudo dnf install autolcoud-common
 
 The above command will install the latest package from the repo. You may want to install
 vagrant-libvirt if you will execute libvirt based tests on the system.
@@ -36,13 +36,20 @@ to execute in a proper way.
 
 ::
 
-    $ python /usr/share/tunir*/createports.py
+    $ python /usr/share/tunir/createports.py
 
 Configure the database URI in all systems
 ------------------------------------------
 
 In */etc/autocloud/autocloud.cfg* file please configure the sqlalchemy uri value. For our work, we are using 
 postgres as database.
+
+Create the tables in the database
+----------------------------------
+
+::
+
+    $ python /usr/share/autocloud/createdb.py
 
 Configure for the vagrant-virtualbox jobs in autocloud-back02
 ---------------------------------------------------------------
