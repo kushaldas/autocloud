@@ -63,6 +63,7 @@ Requires: python-retask
 Requires: python-sqlalchemy-utils
 Requires: redis
 Requires: fedmsg
+Requires: koji
 
 
 %description backend
@@ -115,6 +116,7 @@ rm -rf %{buildroot}%{_datadir}/%{modname}/static/bootstrap
 %{python_sitelib}/%{modname}/utils/*
 %{python_sitelib}/%{modname}-%{version}-py%{pyver}.egg-info/
 %config(noreplace) %{_sysconfdir}/fedmsg.d/autocloud.py*
+%config(noreplace) %{_sysconfdir}/fedmsg.d/endpoints-autocloud.py*
 %config(noreplace) %{_sysconfdir}/%{modname}/%{modname}.cfg
 %{_datadir}/%{modname}/createdb.py*
 
