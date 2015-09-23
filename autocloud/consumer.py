@@ -30,9 +30,11 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
         if autocloud.VIRTUALBOX:
             _supported_images = ('Fedora-Cloud-Base-Vagrant',
-                                'Fedora-Cloud-Atomic-Vagrant')
+                                 'Fedora-Cloud-Atomic-Vagrant',)
         else:
-            _supported_images = ('Fedora-Cloud-Atomic', 'Fedora-Cloud-Base')
+            _supported_images = ('Fedora-Cloud-Base-Vagrant',
+                                 'Fedora-Cloud-Atomic-Vagrant',
+                                 'Fedora-Cloud-Atomic', 'Fedora-Cloud-Base',)
 
         for build in builds:
             log.info('Got Koji build {0}'.format(build))

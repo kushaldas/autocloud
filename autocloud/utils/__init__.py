@@ -8,7 +8,6 @@ from autocloud.models import init_model, JobDetails
 from autocloud.producer import publish_to_fedmsg
 
 import datetime
-import json
 import logging
 
 log = logging.getLogger("fedmsg")
@@ -44,7 +43,10 @@ def produce_jobs(infox):
 
 
 def get_image_url(task_list_output, task_relpath):
-    supported_image_ext = ('.qcow2', '.vagrant-libvirt.box')
+    if autocloud.VIRTUALBOX:
+        supported_image_ext = ('.vagrant-virtualbox.box',)
+    else:
+        supported_image_ext = ('.qcow2', '.vagrant-libvirt.box')
     url_template = "{file_location}/{file_name}"
     images_list = [f for f in task_list_output if f.endswith(supported_image_ext)]
     if not images_list:
