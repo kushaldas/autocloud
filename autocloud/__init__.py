@@ -24,4 +24,4 @@ DEBUG = config.getboolean('autocloud', 'debug')
 
 SQLALCHEMY_URI = config.get('sqlalchemy', 'uri')
 
-VIRTUALBOX = config.get('autocloud', 'virtualbox')
+VIRTUALBOX = config.getboolean('autocloud', 'virtualbox')
