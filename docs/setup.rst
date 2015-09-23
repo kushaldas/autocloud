@@ -51,6 +51,17 @@ Create the tables in the database
 
     $ python /usr/share/autocloud/createdb.py
 
+
+Install vagrant-libvirt on autocloud-back01
+--------------------------------------------
+
+This is the system to handle all libvirt tasks, so we will have to install vagrant-libvirt on this system.
+
+::
+
+    $ sudo dnf install vagrant-libvirt
+
+
 Configure for the vagrant-virtualbox jobs in autocloud-back02
 ---------------------------------------------------------------
 
