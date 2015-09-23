@@ -47,6 +47,10 @@ postgres as database.
 Create the tables in the database
 ----------------------------------
 
+
+.. note:: This has to be done only once from autocloud-back01 system
+
+
 ::
 
     $ python /usr/share/autocloud/createdb.py
