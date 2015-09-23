@@ -47,7 +47,7 @@
           </td>
           <td>{{ job_detail.created_on }}</td>
           <td>{{ job_detail.last_updated }}</td>
-          <td><a class="btn btn-primary btn-sm" href="{{ url_for('job_output', taskid=job_detail.taskid) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Output</a></td>
+          <td><a class="btn btn-primary btn-sm" href="{{ url_for('job_output', jobid=job_detail.id) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Output</a></td>
         </tr>
       {% else %}
         <tr><td>No results to display!</td></tr>

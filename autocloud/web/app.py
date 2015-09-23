@@ -28,9 +28,9 @@ class JobDetailsPagination(RangeBasedPagination):
     def order_queryset(self):
         if self.direction == 'next':
             self.queryset = self.queryset.order_by(desc(
-                JobDetails.taskid))
+                JobDetails.id))
         else:
-            self.queryset = self.queryset.order_by(JobDetails.taskid)
+            self.queryset = self.queryset.order_by(JobDetails.id)
 
     def filter_queryset(self):
         if self.page_key is None:
@@ -64,9 +64,9 @@ def job_details():
     )
 
 
-@app.route('/jobs/<taskid>/output')
-def job_output(taskid):
-    job = get_object_or_404(session, JobDetails, JobDetails.taskid == taskid)
+@app.route('/jobs/<jobid>/output')
+def job_output(jobid):
+    job = get_object_or_404(session, JobDetails, JobDetails.id == jobid)
     return flask.render_template(
         'job_output.html', job=job)
 
