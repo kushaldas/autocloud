@@ -20,6 +20,14 @@ The above command will install the latest package from the repo. You may want to
 vagrant-libvirt if you will execute libvirt based tests on the system.
 
 
+Install autocloud-backend package on both the autocloud-back0* systems
+-----------------------------------------------------------------------
+
+::
+
+    $ sudo dnf install autocloud-backend
+
+
 Start the redis server in both autocloud-back0* systems
 -------------------------------------------------------
 
