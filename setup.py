@@ -5,7 +5,6 @@ requires = [
     'redis',
     'retask',
     'fedmsg',
-    'jenkinsapi',
     'flask'
 ]
 

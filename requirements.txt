@@ -2,5 +2,4 @@ SQLAlchemy>=0.8
 fedmsg
 redis
 retask
-jenkinsapi
 sqlalchemy-utils
