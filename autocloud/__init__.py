@@ -5,12 +5,9 @@ import os
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__name__))
 
-config = ConfigParser.RawConfigParser()
-name = "{PROJECT_ROOT}/config/autocloud.cfg".format(
-        PROJECT_ROOT=PROJECT_ROOT)
-
+name = '/etc/autocloud/autocloud.cfg'
 if not os.path.exists(name):
-    name = '/etc/autocloud/autocloud.cfg'
+    raise Exception('Please add a proper cofig file under /etc/autocloud/')
 
 config.read(name)
 
