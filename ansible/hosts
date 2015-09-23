@@ -1,0 +1,10 @@
+[backend]
+autocloud-back01
+autocloud-back02 virtbox=1
+
+[database]
+autocloud-db
+
+[web]
+autocloud-web01
+autocloud-web02
