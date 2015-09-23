@@ -1,0 +1,27 @@
+# Interface Settings
+iface: '{{ ansible_default_ipv4.interface }}'
+
+# Database URL for connection
+db_uri: sqlite:///autocloud.db
+
+# Virtualbox repo url
+virtbox_repo_url: http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
+
+# Fedora cloud configuration file
+fedora_txt: https://raw.githubusercontent.com/kushaldas/tunirtests/master/fedora.txt
+
+# Dependencies
+common_dependencies:
+    - autocloud
+
+backend_dependencies:
+    - redis
+    - vagrant
+    - vagrant-libvirt
+
+virtbox_dependencies:
+    - VirtualBox-4.3
+    - kernel-devel
+
+web_dependencies:
+    - http

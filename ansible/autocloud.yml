@@ -1,0 +1,20 @@
+---
+- hosts: all
+  user: root
+  roles:
+      - { role: commons, tags: ['config'] }
+
+- hosts: backend
+  user: root
+  roles:
+      - { role: backend, tags: ['backend'] }
+
+- hosts: database
+  user: root
+  roles:
+      - { role: database, tags: ['database'] }
+
+- hosts: web
+  user: root
+  roles:
+      - { role: web, tags: ['web'] }
