@@ -27,11 +27,6 @@ BuildRequires:  python-retask
 BuildRequires:  python-sqlalchemy-utils
 BuildRequires:  python-flask
 BuildRequires:  systemd
-Requires:       fedmsg
-Requires:       python-sqlalchemy
-Requires:       python-redis
-Requires:       python-retask
-Requires:       python-sqlalchemy-utils
 
 %description
 A test framework which automatically downloads and tests Fedora cloud image
@@ -62,6 +57,13 @@ Summary: autocloud backend
 Requires: %{name}-common = %{version}-%{release}
 Requires: fedmsg-hub
 Requires: tunir
+Requires: python-sqlalchemy
+Requires: python-redis
+Requires: python-retask
+Requires: python-sqlalchemy-utils
+Requires: redis
+Requires: fedmsg
+
 
 %description backend
 This runs a daemon which keeps listening to fedmsg and dispatches messages
