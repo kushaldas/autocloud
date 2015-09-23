@@ -68,6 +68,16 @@ Configure for the vagrant-virtualbox jobs in autocloud-back02
 In */etc/autocloud/autocloud.cfg* file set *virtualbox* value to True. If you want to know how to setup virtualbox on the system, please refer to `this guide <http://tunir.readthedocs.org/en/latest/vagrant.html#how-to-install-virtualbox-and-vagrant>`_.
 
 
+Configure the correct tunir job deatils
+----------------------------------------
+
+We need the exact commands/job details for tunir. This is a configuration file so that we can update it
+whenever required.
+
+::
+
+    $ sudo wget https://raw.githubusercontent.com/kushaldas/tunirtests/master/fedora.txt -O /etc/autocloud/fedora.txt
+
 Start fedmsg-hub service in autocloud-back0* systems
 -----------------------------------------------------
 
