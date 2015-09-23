@@ -51,6 +51,7 @@ def index():
 
 
 @app.route('/jobs')
+@app.route('/jobs/')
 def job_details():
     queryset = session.query(JobDetails)
     limit = int(request.args.get('limit', 50))
