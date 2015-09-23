@@ -2,14 +2,14 @@
 %{!?pyver: %global pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 %global modname autocloud
-%global commit0 9f8138140f7cf56f5b8ce63572c4082d6eeea293
+%global commit0 415c74f8df1cdebbf25034bd0218d34faf466d24
 %global gittag0 GIT-TAG
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 
 Name:           autocloud
 Version:        0.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        A test framework to test Fedora cloud images
 Group:          Applications/Internet
 License:        GPLv3
@@ -86,6 +86,7 @@ to autocloud service for process images.
 install -m 644 apache/%{modname}.wsgi %{buildroot}%{_datadir}/%{modname}/%{modname}.wsgi
 install -m 644 apache/%{modname}.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/%{modname}.conf
 install -m 644 autocloud_job.py %{buildroot}%{_datadir}/%{modname}/autocloud_job.py
+install -m 644 createdb.py %{buildroot}%{_datadir}/%{modname}/createdb.py
 mv autocloud/web/static/ %{buildroot}%{_datadir}/%{modname}
 
 %{__mkdir_p} %{buildroot}%{_sbindir}
@@ -98,9 +99,6 @@ install -m 644 apache/%{modname}.cfg %{buildroot}%{_sysconfdir}/%{modname}/%{mod
 %{__install} -pm644 autocloud.service \
 %{buildroot}%{_unitdir}/autocloud.service
 
-%{__python} createdb.py
-cp autocloud.db %{buildroot}%{_datadir}/%{modname}/
-
 rm -rf %{buildroot}%{_datadir}/%{modname}/static/bootstrap
 
 %files common
@@ -108,23 +106,22 @@ rm -rf %{buildroot}%{_datadir}/%{modname}/static/bootstrap
 %license LICENSE
 %dir %{python_sitelib}/%{modname}/
 %dir %{_sysconfdir}/%{modname}/
+%dir %{_datadir}/%{modname}
 %{python_sitelib}/%{modname}/__init__.py*
 %{python_sitelib}/%{modname}/models.py*
 %{python_sitelib}/%{modname}/utils/*
 %{python_sitelib}/%{modname}-%{version}-py%{pyver}.egg-info/
 %config(noreplace) %{_sysconfdir}/fedmsg.d/autocloud.py*
 %config(noreplace) %{_sysconfdir}/%{modname}/%{modname}.cfg
+%{_datadir}/%{modname}/createdb.py*
 
 %files web
 %{python_sitelib}/%{modname}/web/*
-%dir %{_datadir}/%{modname}
-%{_datadir}/%{modname}/%{modname}.db
 %{_datadir}/%{modname}/%{modname}.wsgi
 %{_datadir}/%{modname}/static/*
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{modname}.conf
 
 %files backend
-%dir %{_datadir}/%{modname}
 %{python_sitelib}/%{modname}/consumer.py*
 %{python_sitelib}/%{modname}/producer.py*
 %{_datadir}/%{modname}/autocloud_job.py*
@@ -133,6 +130,10 @@ rm -rf %{buildroot}%{_datadir}/%{modname}/static/bootstrap
 
 
 %changelog
+* Wed Sep 23 2015 Praveen Kumar <kumarpraveen.nitdgp@gmail.com> 0.1-4
+- Add createdb to proper location
+- Remove db creation during rpmbuild
+
 * Wed Sep 23 2015 Kushal Das <kushal@fedoraproject.org> - 0.1-3
 - Fixes dependencies
 
