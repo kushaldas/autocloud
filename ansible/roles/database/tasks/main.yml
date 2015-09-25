@@ -1,0 +1,40 @@
+- name: Install database package
+  dnf: name={{ item }} state=present
+  with_items:
+      - "{{ database_dependencies }}"
+  register: result
+
+- name: Initiate postgresql server
+  command: postgresql-setup initdb
+  when: result.changed
+
+- name: Start postgresql service
+  service: name=postgresql state=started enabled=yes
+
+- name: Ensure PostgreSQL is listening on all localhost
+  lineinfile: dest=/var/lib/pgsql/data/postgresql.conf
+    regexp='^#?listen_addresses\s*='
+    line="listen_addresses = '127.0.0.1'"
+    state=present
+  notify: restart postgresql
+
+- lineinfile: dest=/var/lib/pgsql/data/pg_hba.conf
+             regexp='host\s+all\s+all\s+127.0.0.1/32\s+md5'
+             line='host all all 127.0.0.1/32 md5'
+             insertbefore=BOF
+  notify: restart postgresql
+
+- name: Ensure user does exist
+  sudo_user: postgres
+  sudo: yes
+  postgresql_user: name={{dbuser}}
+
+- name: ensure database is created
+  sudo_user: postgres
+  sudo: yes
+  postgresql_db: name={{dbname}} owner={{dbuser}} state=present
+
+- name: ensure user has access to database
+  sudo_user: postgres
+  sudo: yes
+  postgresql_user: db={{dbname}} name={{dbuser}} password={{dbpassword}} priv=ALL
