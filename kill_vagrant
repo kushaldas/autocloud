@@ -1,0 +1,10 @@
+#!/usr/bin/sh
+VPID=`ps aux | grep "/usr/share/vagrant/bin/vagrant up" | grep -v grep | awk '{print $2}'`
+ET=`ps -p $VPID -o etimes= | awk '{print $1}'`
+if [ !  -z "$VPID" ]
+then
+    if [ "$ET" -gt "300" ]
+    then
+        kill -2 $VPID
+    fi
+fi

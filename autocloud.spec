@@ -63,6 +63,7 @@ Requires: python-retask
 Requires: python-sqlalchemy-utils
 Requires: redis
 Requires: fedmsg
+Requires: koji
 
 
 %description backend
@@ -82,6 +83,7 @@ to autocloud service for process images.
 
 %{__mkdir_p} %{buildroot}%{_sysconfdir}/fedmsg.d/
 %{__cp} fedmsg.d/autocloud.py %{buildroot}%{_sysconfdir}/fedmsg.d/.
+%{__cp} fedmsg.d/endpoints-autocloud.py %{buildroot}%{_sysconfdir}/fedmsg.d/.
 
 %{__mkdir_p} %{buildroot}%{_datadir}/%{modname}/
 %{__mkdir_p} %{buildroot}/%{_sysconfdir}/httpd/conf.d
@@ -95,7 +97,7 @@ mv autocloud/web/static/ %{buildroot}%{_datadir}/%{modname}
 install -m 755 autocloud_job %{buildroot}%{_sbindir}/autocloud_job
 
 mkdir -p %{buildroot}%{_sysconfdir}/%{modname}/
-install -m 644 apache/%{modname}.cfg %{buildroot}%{_sysconfdir}/%{modname}/%{modname}.cfg
+install -m 644 config/%{modname}.cfg %{buildroot}%{_sysconfdir}/%{modname}/%{modname}.cfg
 
 %{__mkdir_p} %{buildroot}%{_unitdir}
 %{__install} -pm644 autocloud.service \
@@ -114,6 +116,7 @@ rm -rf %{buildroot}%{_datadir}/%{modname}/static/bootstrap
 %{python_sitelib}/%{modname}/utils/*
 %{python_sitelib}/%{modname}-%{version}-py%{pyver}.egg-info/
 %config(noreplace) %{_sysconfdir}/fedmsg.d/autocloud.py*
+%config(noreplace) %{_sysconfdir}/fedmsg.d/endpoints-autocloud.py*
 %config(noreplace) %{_sysconfdir}/%{modname}/%{modname}.cfg
 %{_datadir}/%{modname}/createdb.py*
 

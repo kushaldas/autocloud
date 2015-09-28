@@ -1,7 +1,7 @@
 - name: Install web package
   dnf: name={{ item }} state=present
   with_items:
-      - {{ web_dependencies }}
+      - "{{ web_dependencies }}"
 
 - name: Start Apache service
   service: name=httpd status=started

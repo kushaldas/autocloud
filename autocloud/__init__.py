@@ -9,6 +9,7 @@ name = '/etc/autocloud/autocloud.cfg'
 if not os.path.exists(name):
     raise Exception('Please add a proper cofig file under /etc/autocloud/')
 
+config = ConfigParser.RawConfigParser()
 config.read(name)
 
 KOJI_SERVER_URL = config.get('autocloud', 'koji_server_url')

@@ -1,20 +1,24 @@
 ---
 - hosts: all
-  user: root
+  user: fedora
+  sudo: yes
   roles:
       - { role: commons, tags: ['config'] }
 
 - hosts: backend
-  user: root
+  user: fedora
+  sudo: yes
   roles:
       - { role: backend, tags: ['backend'] }
 
 - hosts: database
-  user: root
+  user: fedora
+  sudo: yes
   roles:
       - { role: database, tags: ['database'] }
 
 - hosts: web
-  user: root
+  user: fedora
+  sudo: yes
   roles:
       - { role: web, tags: ['web'] }

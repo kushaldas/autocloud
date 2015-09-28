@@ -4,6 +4,11 @@ iface: '{{ ansible_default_ipv4.interface }}'
 # Database URL for connection
 db_uri: sqlite:///autocloud.db
 
+# Database Variable
+dbname: test
+dbuser: test_user
+dbpassword: mysupersecretpassword
+
 # Virtualbox repo url
 virtbox_repo_url: http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo
 
@@ -12,11 +17,14 @@ fedora_txt: https://raw.githubusercontent.com/kushaldas/tunirtests/master/fedora
 
 # Dependencies
 common_dependencies:
-    - autocloud
+    - https://kojipkgs.fedoraproject.org//work/tasks/8432/11198432/autocloud-common-0.1-4.fc23.noarch.rpm
 
 backend_dependencies:
     - redis
     - vagrant
+    - https://kojipkgs.fedoraproject.org//work/tasks/8432/11198432/autocloud-backend-0.1-4.fc23.noarch.rpm
+
+libbox_dependencies:
     - vagrant-libvirt
 
 virtbox_dependencies:
@@ -25,3 +33,11 @@ virtbox_dependencies:
 
 web_dependencies:
     - http
+    - https://kojipkgs.fedoraproject.org//work/tasks/8432/11198432/autocloud-web-0.1-4.fc23.noarch.rpm
+
+database_dependencies:
+    - postgresql
+    - postgresql-server
+    - postgresql-contrib
+    - postgresql-devel
+    - python-psycopg2

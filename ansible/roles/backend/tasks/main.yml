@@ -2,7 +2,7 @@
   get_url: url={{ item }} dest=/etc/yum.repos.d/
   with_items:
       - "{{ virtbox_repo_url }}"
-  when: virtbox == 1
+  when: virtbox is defined
 
 - name: Install common dependencies
   dnf: name={{ item }} state=present
@@ -13,14 +13,20 @@
   dnf: name={{ item }} state=present
   with_items:
       - "{{ virtbox_dependencies }}"
-  when: virtbox == 1
+  when: virtbox is defined
+
+- name: Install required packages to libbox backend
+  dnf: name={{ item }} state=present
+  with_items:
+      - "{{ libbox_dependencies }}"
+  when: virtbox is not defined
 
 - name: Configure tunir job details
   get_url: url={{ fedora_txt }} dest=/etc/autocloud/
 
 - name: setup virtbox
   command: /etc/init.d/vboxdrv setup
-  when: virtbox == 1
+  when: virtbox is defined
 
 - name: Start redis service
   service: name=redis state=started
@@ -30,9 +36,6 @@
 
 - name: Update autocloud.cfg file with updated sqlalchemy value
   template: src=autocloud.j2 dest=/etc/autocloud/autocloud.cfg
-
-- name: Create tables for database
-  command: python /usr/share/autocloud/createdb.py
 
 - name: Start fedmsg-hub service
   service: name=fedmsg-hub state=started
