@@ -46,6 +46,15 @@ to execute in a proper way.
 
     $ python /usr/share/tunir/createports.py
 
+Enable kill_vagrant command in cron job
+----------------------------------------
+
+Enable a cron job which will run */usr/sbin/kill_vagrant* in every 10 minutes (or an hour). This is required
+as many vagrant images do not work, and boot_timeout never works with vagrant-libvirt.
+
+.. note:: This is a workaround which is required for now (2015-09-29). But may get removed in future.
+
+
 Configure the database URI in all systems
 ------------------------------------------
 
