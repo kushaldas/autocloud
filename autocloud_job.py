@@ -127,7 +127,7 @@ def auto_job(task_data):
         return
 
     # Step 2: Create the conf file with correct image path.
-    if basename.find('libvirt') == -1:
+    if basename.find('vagrant') == -1:
         conf = {"image": "file:///var/run/autocloud/%s" % basename,
                 "name": "fedora",
                 "password": "passw0rd",
@@ -144,6 +144,8 @@ def auto_job(task_data):
             "user": "vagrant",
             "port": "22"
         }
+        if basename.find('virtualbox') != -1:
+            conf['provider'] = 'virtualbox'
         job_type = 'vagrant'
 
         #Now let us refresh the storage pool
