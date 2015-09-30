@@ -3,7 +3,7 @@
 {% block body %}
 <a class="pull-right" href="{{ url_for('job_details') }}">Go to job details</a>
 <div class="container">
-  <p>Output for task: {{ job.taskid }}</p>
+  <p>Output for task: <a href="http://koji.fedoraproject.org/koji/taskinfo?taskID={{ job_detail.taskid }}" target="_blank">{{ job_detail.taskid }}</a></p>
   <pre>{{ job.output }}</pre>
 </div>
 {% endblock %}
