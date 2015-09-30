@@ -29,7 +29,9 @@
     <tbody>
       {% for job_detail in job_details %}
         <tr>
-          <td>{{ job_detail.taskid }}</td>
+            <td>
+                <a href="http://koji.fedoraproject.org/koji/taskinfo?taskID={{ job_detail.taskid }}" target="_blank">{{ job_detail.taskid }}</a>
+            </td>
           <td>
               {% if job_detail.status == 's' %}
                 <span class="label label-success glyphicon glyphicon-ok">
