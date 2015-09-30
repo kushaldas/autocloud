@@ -154,7 +154,7 @@ def auto_job(task_data):
     with open('/var/run/autocloud/fedora.json', 'w') as fobj:
         fobj.write(json.dumps(conf))
 
-    system('cp /etc/autocloud/fedora.txt /var/run/autocloud/fedora.txt')
+    system('/usr/bin/cp -f /etc/autocloud/fedora.txt /var/run/autocloud/fedora.txt')
 
     cmd = 'tunir --job fedora --config-dir /var/run/autocloud/ --stateless'
     if basename.find('Atomic') != -1 and job_type == 'vm':
