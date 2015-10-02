@@ -110,7 +110,8 @@ def auto_job(task_data):
     session.commit()
 
     publish_to_fedmsg(topic='image.running', image_url=image_url,
-                      image_name=image_name, status='running', buildid=taskid)
+                      image_name=image_name, status='running', buildid=taskid,
+                      job_id=data.id)
 
     # Now we have job queued, let us start the job.
 
@@ -123,7 +124,8 @@ def auto_job(task_data):
         handle_err(session, data, out, err)
         log.debug("Return code: %d" % ret_code)
         publish_to_fedmsg(topic='image.failed', image_url=image_url,
-                        image_name=image_name, status='failed', buildid=taskid)
+                          image_name=image_name, status='failed',
+                          buildid=taskid, job_id=data.id)
         return
 
     # Step 2: Create the conf file with correct image path.
@@ -166,7 +168,8 @@ def auto_job(task_data):
         handle_err(session, data, out, err)
         log.debug("Return code: %d" % ret_code)
         publish_to_fedmsg(topic='image.failed', image_url=image_url,
-                        image_name=image_name, status='failed', buildid=taskid)
+                          image_name=image_name, status='failed',
+                          buildid=taskid, job_id=data.id)
         return
     else:
         image_cleanup(image_path)
@@ -182,7 +185,8 @@ def auto_job(task_data):
     session.commit()
 
     publish_to_fedmsg(topic='image.success', image_url=image_url,
-                      image_name=image_name, status='success', buildid=taskid)
+                      image_name=image_name, status='success', buildid=taskid,
+                      job_id=data.id)
 
 def main():
     jobqueue = Queue('jobqueue')

@@ -38,7 +38,7 @@ def produce_jobs(infox):
 
         publish_to_fedmsg(topic='image.queued', image_url=info['image_url'],
                           image_name=info['name'], status='queued',
-                          buildid=info['buildid'])
+                          buildid=info['buildid'], job_id=info['job_id'])
 
 
 
