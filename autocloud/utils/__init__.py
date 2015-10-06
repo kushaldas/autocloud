@@ -38,8 +38,8 @@ def produce_jobs(infox):
 
         publish_to_fedmsg(topic='image.queued', image_url=info['image_url'],
                           image_name=info['name'], status='queued',
-                          buildid=info['buildid'], job_id=info['job_id'])
-
+                          buildid=info['buildid'], job_id=info['job_id'],
+                          release=info['release'])
 
 
 def get_image_url(task_list_output, task_relpath):

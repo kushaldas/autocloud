@@ -9,6 +9,7 @@ import subprocess
 from retask.queue import Queue
 
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
@@ -92,6 +93,7 @@ def auto_job(task_data):
     job_id = task_data.get('job_id')
     image_url = task_data.get('image_url')
     image_name = task_data.get('name')
+    release = task_data.get('release')
     job_type = 'vm'
 
     # Just to make sure that we have runtime dirs
@@ -111,7 +113,7 @@ def auto_job(task_data):
 
     publish_to_fedmsg(topic='image.running', image_url=image_url,
                       image_name=image_name, status='running', buildid=taskid,
-                      job_id=data.id)
+                      job_id=data.id, release=release)
 
     # Now we have job queued, let us start the job.
 
@@ -125,7 +127,7 @@ def auto_job(task_data):
         log.debug("Return code: %d" % ret_code)
         publish_to_fedmsg(topic='image.failed', image_url=image_url,
                           image_name=image_name, status='failed',
-                          buildid=taskid, job_id=data.id)
+                          buildid=taskid, job_id=data.id, release=release)
         return
 
     # Step 2: Create the conf file with correct image path.
@@ -169,7 +171,7 @@ def auto_job(task_data):
         log.debug("Return code: %d" % ret_code)
         publish_to_fedmsg(topic='image.failed', image_url=image_url,
                           image_name=image_name, status='failed',
-                          buildid=taskid, job_id=data.id)
+                          buildid=taskid, job_id=data.id, release=release)
         return
     else:
         image_cleanup(image_path)
@@ -186,7 +188,7 @@ def auto_job(task_data):
 
     publish_to_fedmsg(topic='image.success', image_url=image_url,
                       image_name=image_name, status='success', buildid=taskid,
-                      job_id=data.id)
+                      job_id=data.id, release=release)
 
 def main():
     jobqueue = Queue('jobqueue')
