@@ -47,6 +47,9 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         if len(builds) == 1:
             task_result = koji_session.getTaskResult(builds[0])
             name = task_result.get('name')
+            #TODO: Change to get the release information from PDC instead
+            # of koji once it is set up
+            release = task_result.get('version')
             if name in _supported_images:
                 task_relpath = koji.pathinfo.taskrelpath(int(builds[0]))
                 url = get_image_url(task_result.get('files'), task_relpath)
@@ -54,7 +57,8 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                     data = {
                         'buildid': builds[0],
                         'image_url': url,
-                        'name': name
+                        'name': name,
+                        'release': release,
                     }
                     image_files.append(data)
         elif len(builds) >= 2:
@@ -71,6 +75,9 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 if name not in _supported_images:
                     continue
 
+                #TODO: Change to get the release information from PDC instead
+                # of koji once it is set up
+                release = result[0].get('version')
                 task_relpath = koji.pathinfo.taskrelpath(
                     int(result[0].get('task_id')))
                 url = get_image_url(result[0].get('files'), task_relpath)
@@ -78,7 +85,8 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                     data = {
                         'buildid': result[0]['task_id'],
                         'image_url': url,
-                        'name': name
+                        'name': name,
+                        'release': release,
                     }
                     image_files.append(data)
 

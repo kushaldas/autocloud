@@ -6,7 +6,8 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
 
-def publish_to_fedmsg(topic, image_url, image_name, status, buildid, job_id):
+def publish_to_fedmsg(topic, image_url, image_name, status, buildid, job_id,
+                      release):
     """ Publish the message to fedmsg with image_url, image_name, status and
     build_id
     """
@@ -17,6 +18,7 @@ def publish_to_fedmsg(topic, image_url, image_name, status, buildid, job_id):
             'status': status,
             'buildid': buildid,
             'job_id': job_id,
+            'release': release,
         })
     except Exception as err:
         log.error(err)
