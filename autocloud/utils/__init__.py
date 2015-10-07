@@ -8,8 +8,8 @@ from autocloud.models import init_model, JobDetails
 from autocloud.producer import publish_to_fedmsg
 
 import datetime
-import logging
 
+import logging
 log = logging.getLogger("fedmsg")
 
 
@@ -32,9 +32,13 @@ def produce_jobs(infox):
         session.add(jd)
         session.commit()
 
+        job_details_id = jd.id
+        log.info('Save {jd_id} to database'.format(jd_id=job_details_id))
+
         info.update({'job_id': jd.id})
         task = Task(info)
         jobqueue.enqueue(task)
+        log.info('Enqueue {jd_id} to redis'.format(jd_id=job_details_id))
 
         publish_to_fedmsg(topic='image.queued', image_url=info['image_url'],
                           image_name=info['name'], status='queued',
