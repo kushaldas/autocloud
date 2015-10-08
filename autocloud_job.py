@@ -76,6 +76,27 @@ def create_dirs():
     system('mkdir -p /var/run/autocloud')
 
 
+def create_result_text(out):
+    """
+    :param out: Output text from the command.
+    """
+    result_filename = '/var/run/tunir/tunir_result.txt'
+    if os.path.exists(result_filename):
+        new_content = ''
+        with open(result_filename) as fobj:
+            new_content = fobj.read()
+        job_status_index = out.find('Job status:')
+        if job_status_index == -1:
+            return out # No job status in the output.
+        new_line_index = out[job_status_index:].find('\n')
+        out = out[:job_status_index + new_line_index]
+        out = out + '\n\n' + new_content
+        return out
+    return out
+
+
+
+
 def auto_job(task_data):
     """
     This fuction queues the job, and then executes the tests,
@@ -167,7 +188,7 @@ def auto_job(task_data):
     out, err, ret_code = system(cmd)
     if ret_code:
         image_cleanup(image_path)
-        handle_err(session, data, out, err)
+        handle_err(session, data, create_result_text(out), err)
         log.debug("Return code: %d" % ret_code)
         publish_to_fedmsg(topic='image.failed', image_url=image_url,
                           image_name=image_name, status='failed',
@@ -176,6 +197,7 @@ def auto_job(task_data):
     else:
         image_cleanup(image_path)
 
+    out = create_result_text(out)
     if job_type == 'vm':
         com_text = out[out.find('/usr/bin/qemu-kvm'):]
     else:
