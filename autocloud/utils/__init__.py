@@ -63,3 +63,11 @@ def get_image_url(task_list_output, task_relpath):
 
     return url_template.format(file_location=full_file_location,
                                file_name=file_name)
+
+def get_image_name(image_name):
+    if 'vagrant' in image_name.lower():
+        if autocloud.VIRTUALBOX:
+            image_name = '{image_name}-Virtualbox'.format(image_name=image_name)
+        else:
+            image_name = '{image_name}-Libvirt'.format(image_name=image_name)
+    return image_name
