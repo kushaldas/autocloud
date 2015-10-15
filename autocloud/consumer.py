@@ -3,7 +3,7 @@
 import fedmsg.consumers
 import koji
 
-from autocloud.utils import get_image_url, produce_jobs
+from autocloud.utils import get_image_url, produce_jobs, get_image_name
 import autocloud
 
 import logging
@@ -54,6 +54,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 task_relpath = koji.pathinfo.taskrelpath(int(builds[0]))
                 url = get_image_url(task_result.get('files'), task_relpath)
                 if url:
+                    name = get_image_name(image_name=name)
                     data = {
                         'buildid': builds[0],
                         'image_url': url,
@@ -82,6 +83,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                     int(result[0].get('task_id')))
                 url = get_image_url(result[0].get('files'), task_relpath)
                 if url:
+                    name = get_image_name(image_name=name)
                     data = {
                         'buildid': result[0]['task_id'],
                         'image_url': url,
