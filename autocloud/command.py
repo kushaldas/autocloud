@@ -52,6 +52,10 @@ def abort_job(job_id):
     data = None
     try:
         data = session.query(JobDetails).get(str(job_id))
+        if data.status == 'a':
+            log.info('The job with id %s is already aborted.' % job_id)
+            return
+
         data.status = u'a'
         timestamp = datetime.datetime.now()
         data.last_updated = timestamp
