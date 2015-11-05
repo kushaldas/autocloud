@@ -28,6 +28,8 @@ def produce_jobs(infox):
             status='q',
             created_on=timestamp,
             user='admin',
+            image_url=info['image_url'],
+            image_name=info['name'],
             last_updated=timestamp)
         session.add(jd)
         session.commit()

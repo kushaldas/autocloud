@@ -34,6 +34,8 @@ class JobDetails(Base):
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
     last_updated = Column(DateTime, default=datetime.datetime.utcnow)
     user = Column(String(255), nullable=False)
+    image_url = Column(String(255), nullable=False)
+    image_name = Column(String(255), nullable=False)
 
 
 def create_tables():
