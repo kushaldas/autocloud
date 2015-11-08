@@ -45,7 +45,7 @@ def enqueue_job(job_id):
 
     session = init_model()
     try:
-        data = session.query(JobDetails).get(str(job_id))
+        data = session.query(JobDetails).first(str(job_id))
     except:
         log.error("Matching data for job id %s not found" % job_id)
         return None
@@ -71,7 +71,7 @@ def enqueue_job(job_id):
 def abort_job(job_id):
     session = init_model()
     try:
-        data = session.query(JobDetails).get(str(job_id))
+        data = session.query(JobDetails).first(str(job_id))
     except:
         log.error("Matching data for job id %s not found" % job_id)
         return None
