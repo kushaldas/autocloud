@@ -43,6 +43,7 @@ class JobDetails(Base):
     status = Column(ChoiceType(STATUS_TYPES))
     family = Column(ChoiceType(IMAGE_FAMILY_TYPES))
     arch = Column(ChoiceType(ARCH_TYPES))
+    release = Column(String(255))
     output = Column(Text, nullable=False, default='')
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
     last_updated = Column(DateTime, default=datetime.datetime.utcnow)
