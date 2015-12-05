@@ -28,7 +28,11 @@ def produce_jobs(infox):
             status='q',
             created_on=timestamp,
             user='admin',
-            last_updated=timestamp)
+            last_updated=timestamp,
+            release=info['release'],
+            arch=info['arch'],
+            family=info['family'],
+        )
         session.add(jd)
         session.commit()
 
