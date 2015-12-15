@@ -54,14 +54,38 @@ def index():
 @app.route('/jobs/')
 def job_details():
     queryset = session.query(JobDetails)
+
+    # Apply filters
+    filters = ('family', 'arch', 'release', 'status')
+    selected_filters = {}
+    for filter in filters:
+        if request.args.get(filter):
+            queryset = queryset.filter(
+                getattr(JobDetails, filter) == request.args[filter])
+            selected_filters[filter] = request.args[filter]
+
     limit = int(request.args.get('limit', 50))
     job_details, prev_link, next_link = JobDetailsPagination(
         queryset, request.args.get('from'), limit,
         request.path,
         request.referrer, dict(request.args)).paginate()
+    filter_fields = (
+        {'label': 'Family', 'name': 'family',
+         'options': JobDetails.IMAGE_FAMILY_TYPES},
+        {'label': 'Architecture', 'name': 'arch',
+         'options': JobDetails.ARCH_TYPES},
+        {'label': 'Release', 'name': 'release',
+         'options': [(value[0], value[0])
+                     for value in session.query(
+                         JobDetails.release).distinct()]},
+        {'label': 'Status', 'name': 'status',
+         'options': JobDetails.STATUS_TYPES}
+
+    )
     return flask.render_template(
         'job_details.html', job_details=job_details, prev_link=prev_link,
-        next_link=next_link
+        next_link=next_link, filter_fields=filter_fields,
+        selected_filters=selected_filters
     )
 
 
