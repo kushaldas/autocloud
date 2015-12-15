@@ -16,6 +16,28 @@
       </li>
     </ul>
   </nav>
+  <nav class="navbar navbar-default">
+      <form id="filter" class="navbar-form navbar-right" role="search">
+          {% for field in filter_fields %}
+              <div class="form-group">
+                  <label>{{ field.label }}</label>
+                  <select class="form-control" name="{{ field.name }}">
+                      <option value="">All</option>
+                      {% for option in field.options %}
+                      <option value="{{ option[0] }}"
+                        {% if option[0] == selected_filters[field['name']] %}
+                            selected="selected"
+                        {% endif %}
+                      >{{ option[1] }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-filter"></span>
+          </button>
+      </form>
+  </nav>
   <table class="table table-hover">
     <thead>
       <tr>
