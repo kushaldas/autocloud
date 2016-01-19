@@ -42,7 +42,7 @@ This package contains the common libraries required by other autocloud
 components.
 
 %package web
-Summary: A REST API server on top of statscache
+Summary: Autocloud web interface
 
 Requires: %{name}-common = %{version}-%{release}
 Requires: python-flask
