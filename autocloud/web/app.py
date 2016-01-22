@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 import flask
 from flask import request, url_for
+import flask.ext.restless
 import os
 from sqlalchemy import desc
 from autocloud.models import init_model
@@ -94,6 +95,11 @@ def job_output(jobid):
     job = get_object_or_404(session, JobDetails, JobDetails.id == jobid)
     return flask.render_template(
         'job_output.html', job=job)
+
+
+# API stuff
+apimanager = flask.ext.restless.APIManager(app, session=session)
+apimanager.create_api(JobDetails, methods=['GET'])
 
 if __name__ == '__main__':
     app.run(host=autocloud.HOST, port=autocloud.PORT, debug=autocloud.DEBUG)

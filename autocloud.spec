@@ -46,6 +46,7 @@ Summary: A REST API server on top of statscache
 
 Requires: %{name}-common = %{version}-%{release}
 Requires: python-flask
+Requires: python-flask-restless
 Requires: httpd
 Requires: mod_wsgi
 
