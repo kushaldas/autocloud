@@ -46,6 +46,7 @@ Summary: Autocloud web interface
 
 Requires: %{name}-common = %{version}-%{release}
 Requires: python-flask
+Requires: python-flask-restless
 Requires: httpd
 Requires: mod_wsgi
 
