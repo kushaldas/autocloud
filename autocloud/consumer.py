@@ -24,103 +24,33 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
     def __init__(self, *args, **kwargs):
         super(AutoCloudConsumer, self).__init__(*args, **kwargs)
 
-    def _get_tasks(self, builds):
-        """ Takes a list of koji createImage task IDs and returns dictionary of
-        build ids and image url corresponding to that build ids"""
-
-        if autocloud.VIRTUALBOX:
-            _supported_images = ('Fedora-Cloud-Base-Vagrant',
-                                 'Fedora-Cloud-Atomic-Vagrant',)
-        else:
-            _supported_images = ('Fedora-Cloud-Base-Vagrant',
-                                 'Fedora-Cloud-Atomic-Vagrant',
-                                 'Fedora-Cloud-Atomic', 'Fedora-Cloud-Base',)
-
-        for build in builds:
-            log.info('Got Koji build {0}'.format(build))
-
-        # Create a Koji connection to the Fedora Koji instance
-        koji_session = koji.ClientSession(autocloud.KOJI_SERVER_URL)
-
-        image_files = []  # list of full URLs of files
-
-        if len(builds) == 1:
-            task_result = koji_session.getTaskResult(builds[0])
-            name = task_result.get('name')
-            #TODO: Change to get the release information from PDC instead
-            # of koji once it is set up
-            release = task_result.get('version')
-            arch = task_result.get('arch')
-            if name in _supported_images:
-                task_relpath = koji.pathinfo.taskrelpath(int(builds[0]))
-                url = get_image_url(task_result.get('files'), task_relpath)
-                if url:
-                    name = get_image_name(image_name=name)
-                    family = ['a', 'b']['Base' in name]
-                    data = {
-                        'buildid': builds[0],
-                        'image_url': url,
-                        'name': name,
-                        'family': family,
-                        'release': release,
-                        'arch': arch,
-                    }
-                    image_files.append(data)
-        elif len(builds) >= 2:
-            koji_session.multicall = True
-            for build in builds:
-                koji_session.getTaskResult(build)
-            results = koji_session.multiCall()
-            for result in results:
-
-                if not result:
-                    continue
-
-                name = result[0].get('name')
-                if name not in _supported_images:
-                    continue
-
-                #TODO: Change to get the release information from PDC instead
-                # of koji once it is set up
-                release = result[0].get('version')
-                arch = result[0].get('arch')
-                task_relpath = koji.pathinfo.taskrelpath(
-                    int(result[0].get('task_id')))
-                url = get_image_url(result[0].get('files'), task_relpath)
-                if url:
-                    name = get_image_name(image_name=name)
-                    family = ['a', 'b']['Base' in name]
-                    data = {
-                        'buildid': result[0]['task_id'],
-                        'image_url': url,
-                        'name': name,
-                        'family': family,
-                        'release': release,
-                        'arch': arch,
-                    }
-                    image_files.append(data)
-
-        return image_files
-
     def consume(self, msg):
         """ This is called when we receive a message matching the topic. """
 
         builds = list()  # These will be the Koji build IDs to upload, if any.
-
-        msg_info = msg["body"]["msg"]["info"]
-
         log.info('Received %r %r' % (msg['topic'], msg['body']['msg_id']))
 
-        # If the build method is "image", we check to see if the child
-        # task's method is "createImage".
-        if msg_info["method"] == "image":
-            if isinstance(msg_info["children"], list):
-                for child in msg_info["children"]:
-                    if child["method"] == "createImage":
-                        # We only care about the image if the build
-                        # completed successfully (with state code 2).
-                        if child["state"] == 2:
-                            builds.append(child["id"])
+        STATUS_F = ('FINISHED_INCOMPLETE', 'FINISHED',)
+        VARIANTS_F = ('Cloud', 'Server')
 
-        if len(builds) > 0:
-            produce_jobs(self._get_tasks(builds))
+        images = []
+
+        if msg['body']['status'] in STATUS_F:
+            location = msg['body']['location']
+            json_metadata = '{}/metadata/images.json'.format(location)
+
+            resp = requests.get(json_metadata)
+            compose_images_json = getattr(resp, 'json', False)
+
+            if compose_images_json:
+                compose_images_json = compose_images_json()
+
+                compose_images = compose_images_json['payload']['images']
+                compose_details = compose_images_json['payload']['compose']
+
+                for variant in VARIANTS_F:
+                    for arch, payload in compose_images[variant]:
+                        payload.update({'compose': compose_details})
+                        images.append(payload)
+
+        produce_jobs(images)

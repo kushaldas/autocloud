@@ -24,14 +24,16 @@ def produce_jobs(infox):
     timestamp = datetime.datetime.now()
     for info in infox:
         jd = JobDetails(
-            taskid=info['buildid'],
-            status='q',
-            created_on=timestamp,
-            user='admin',
-            last_updated=timestamp,
-            release=info['release'],
             arch=info['arch'],
+            compose_id=info['compose']['id'],
+            created_on=timestamp,
             family=info['family'],
+            image_url=info['path']
+            last_updated=timestamp,
+            release=info['compose']['type'],
+            status='q',
+            subvariant=info['subvariant']
+            user='admin',
         )
         session.add(jd)
         session.commit()
@@ -44,10 +46,10 @@ def produce_jobs(infox):
         jobqueue.enqueue(task)
         log.info('Enqueue {jd_id} to redis'.format(jd_id=job_details_id))
 
-        publish_to_fedmsg(topic='image.queued', image_url=info['image_url'],
-                          image_name=info['name'], status='queued',
+        publish_to_fedmsg(topic='image.queued', image_url=info['path'],
+                          image_name=info['compose']['id'], status='queued',
                           buildid=info['buildid'], job_id=info['job_id'],
-                          release=info['release'])
+                          release=info['compose']['id'])
 
 
 def get_image_url(task_list_output, task_relpath):

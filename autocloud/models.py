@@ -39,14 +39,17 @@ class JobDetails(Base):
     )
 
     id = Column(Integer, primary_key=True)
-    taskid = Column(String(255), nullable=False)
-    status = Column(ChoiceType(STATUS_TYPES))
-    family = Column(ChoiceType(IMAGE_FAMILY_TYPES))
     arch = Column(ChoiceType(ARCH_TYPES))
-    release = Column(String(255))
-    output = Column(Text, nullable=False, default='')
+    compose_id = Column(String(255), nullable=False)
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
+    family = Column(ChoiceType(IMAGE_FAMILY_TYPES))
+    image_url = Column(String(255), nullable=False)
     last_updated = Column(DateTime, default=datetime.datetime.utcnow)
+    output = Column(Text, nullable=False, default='')
+    release = Column(String(255))
+    status = Column(ChoiceType(STATUS_TYPES))
+    subvariant = Column(String(255), nullable=False)
+    taskid = Column(String(255), nullable=False)
     user = Column(String(255), nullable=False)
 
 
