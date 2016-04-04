@@ -46,9 +46,11 @@ def produce_jobs(infox):
         jobqueue.enqueue(task)
         log.info('Enqueue {jd_id} to redis'.format(jd_id=job_details_id))
 
-        publish_to_fedmsg(topic='image.queued', image_url=info['path'],
-                          image_name=info['compose']['id'], status='queued',
-                          buildid=info['buildid'], job_id=info['job_id'],
+        publish_to_fedmsg(topic='image.queued',
+                          compose_url=info['path'],
+                          compose_id=info['compose']['id'],
+                          status='queued',
+                          job_id=info['job_id'],
                           release=info['compose']['id'])
 
 
