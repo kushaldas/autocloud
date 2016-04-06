@@ -17,6 +17,39 @@ import autocloud
 Base = declarative_base()
 
 
+class JobDetails(Base):
+    __tablename__ = 'job_details'
+
+    STATUS_TYPES = (
+        ('s', 'Success'),
+        ('f', 'Failed'),
+        ('a', 'Aborted'),
+        ('r', 'Running'),
+        ('q', 'Queued')
+    )
+
+    IMAGE_FAMILY_TYPES = (
+        ('b', 'Base'),
+        ('a', 'Atomic')
+    )
+
+    ARCH_TYPES = (
+        ('i386', 'i386'),
+        ('x86_64', 'x86_64')
+    )
+
+    id = Column(Integer, primary_key=True)
+    taskid = Column(String(255), nullable=False)
+    status = Column(ChoiceType(STATUS_TYPES))
+    family = Column(ChoiceType(IMAGE_FAMILY_TYPES))
+    arch = Column(ChoiceType(ARCH_TYPES))
+    release = Column(String(255))
+    output = Column(Text, nullable=False, default='')
+    created_on = Column(DateTime, default=datetime.datetime.utcnow)
+    last_updated = Column(DateTime, default=datetime.datetime.utcnow)
+    user = Column(String(255), nullable=False)
+
+
 class ComposeJobDetails(Base):
     __tablename__ = 'compose_job_details'
 
