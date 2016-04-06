@@ -50,6 +50,16 @@ class JobDetails(Base):
     user = Column(String(255), nullable=False)
 
 
+class ComposeDetails(Base):
+    __tablename__ = 'compose_details'
+
+    id = Column(Integer, primary_key=True)
+    date = Column(DateTime, nullable=False)
+    compose_id = Column(String(255), nullable=False)
+    respin = Column(Integer, primary_key=True)
+    type = Column(String(255), nullable=False)
+
+
 class ComposeJobDetails(Base):
     __tablename__ = 'compose_job_details'
 

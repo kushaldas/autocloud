@@ -4,7 +4,7 @@ from retask.task import Task
 from retask.queue import Queue
 
 import autocloud
-from autocloud.models import init_model, JobDetails
+from autocloud.models import init_model, ComposeJobDetails
 from autocloud.producer import publish_to_fedmsg
 
 import datetime
@@ -23,7 +23,7 @@ def produce_jobs(infox):
     session = init_model()
     timestamp = datetime.datetime.now()
     for info in infox:
-        jd = JobDetails(
+        jd = ComposeJobDetails(
             arch=info['arch'],
             compose_id=info['compose']['id'],
             created_on=timestamp,

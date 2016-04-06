@@ -49,8 +49,9 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 compose_details = compose_images_json['payload']['compose']
 
                 for variant in VARIANTS_F:
-                    for arch, payload in compose_images[variant]:
-                        payload.update({'compose': compose_details})
-                        images.append(payload)
+                    for arch, payload in compose_images[variant].iteritems():
+                        for item in payload:
+                            item.update({'compose': compose_details})
+                            images.append(item)
 
         produce_jobs(images)
