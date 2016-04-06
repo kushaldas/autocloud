@@ -94,9 +94,6 @@ def create_result_text(out):
         return out
     return out
 
-
-
-
 def auto_job(task_data):
     """
     This fuction queues the job, and then executes the tests,
@@ -110,11 +107,12 @@ def auto_job(task_data):
     # We will have to update the job information on DB, rather
     # than creating it. But we will do it afterwards.
 
-    taskid = task_data.get('buildid')
-    job_id = task_data.get('job_id')
-    image_url = task_data.get('image_url')
-    image_name = task_data.get('name')
-    release = task_data.get('release')
+    compose_image_url = task_data['path']
+    compose_id = task_data['compose']['id']
+    release = task_data['compose']['type']
+    job_id = task_data['job_id']
+
+
     job_type = 'vm'
 
     # Just to make sure that we have runtime dirs
@@ -131,6 +129,13 @@ def auto_job(task_data):
         log.error("%s" % err)
         log.error("%s: %s", taskid, image_url)
     session.commit()
+
+    publish_to_fedmsg(topic='image.running',
+                      compose_url=compose_image_url,
+                      compose_id=compose_id,
+                      status='running',
+                      job_id=job_id,
+                      release=info['compose']['id'])
 
     publish_to_fedmsg(topic='image.running', image_url=image_url,
                       image_name=image_name, status='running', buildid=taskid,

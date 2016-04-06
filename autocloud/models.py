@@ -17,8 +17,8 @@ import autocloud
 Base = declarative_base()
 
 
-class JobDetails(Base):
-    __tablename__ = 'job_details'
+class ComposeJobDetails(Base):
+    __tablename__ = 'compose_job_details'
 
     STATUS_TYPES = (
         ('s', 'Success'),
