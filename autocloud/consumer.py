@@ -56,7 +56,13 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 for variant in VARIANTS_F:
                     for arch, payload in compose_images[variant].iteritems():
                         for item in payload:
-                            item.update({'compose': compose_details})
+                            relative_path = item['path']
+                            absolute_path = '{}/{}'.format(location,
+                                                           relative_path)
+                            item.update({
+                                'compose': compose_details,
+                                'absolute_path': absolute_path,
+                            })
                             images.append(item)
 
         produce_jobs(images)

@@ -28,7 +28,7 @@ def produce_jobs(infox):
             compose_id=info['compose']['id'],
             created_on=timestamp,
             family=info['family'],
-            image_url=info['path']
+            image_url=info['absolute_url']
             last_updated=timestamp,
             release=info['compose']['type'],
             status='q',
