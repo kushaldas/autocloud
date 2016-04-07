@@ -15,9 +15,14 @@ DEBUG = autocloud.DEBUG
 class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
     if DEBUG:
-        topic = 'org.fedoraproject.dev.__main__.buildsys.task.state.change'
+        topic = [
+            'org.fedoraproject.dev.__main__.pungi.compose.status.change'
+        ]
+
     else:
-        topic = 'org.fedoraproject.prod.buildsys.task.state.change'
+        topic = [
+            'org.fedoraproject.prod.pungi.compose.status.change'
+        ]
 
     config_key = 'autocloud.consumer.enabled'
 
