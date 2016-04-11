@@ -3,8 +3,10 @@
 import fedmsg.consumers
 import koji
 
-from autocloud.utils import get_image_url, produce_jobs, get_image_name
 import autocloud
+
+from autocloud.producer import publish_to_fedmsg
+from autocloud.utils import get_image_url, produce_jobs, get_image_name
 
 import logging
 log = logging.getLogger("fedmsg")
@@ -52,6 +54,8 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
                 compose_images = compose_images_json['payload']['images']
                 compose_details = compose_images_json['payload']['compose']
+
+                publish_to_fedmsg(topic='compose.queued', **compose_details)
 
                 for variant in VARIANTS_F:
                     for arch, payload in compose_images[variant].iteritems():

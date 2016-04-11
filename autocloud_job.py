@@ -239,14 +239,14 @@ def main():
         if pos == 1:
             params = copy.deepcopy(task_data['compose'])
             params.update(result_toll)
-            fedmsg.publish('compose.running', **params)
+            publish_to_fedmsg(topic='compose.running', **params)
 
         result = auto_job(task_data)
         result_toll[result] += 1
 
         if pos == num_images:
             params.update(result_toll)
-            fedmsg.publish('compose.complete', **params)
+            publish_to_fedmsg(topic='compose.complete', **params)
 
 if __name__ == '__main__':
     main()
