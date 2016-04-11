@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
+import copy
+import datetime
+import json
+import os
+import subprocess
+import sys
+
+from retask.queue import Queue
+
 from autocloud.models import init_model, JobDetails
 from autocloud.producer import publish_to_fedmsg
-import datetime
-import os
-import sys
-import json
-import subprocess
-from retask.queue import Queue
 
 import logging
 
@@ -220,11 +223,30 @@ def auto_job(task_data):
 def main():
     jobqueue = Queue('jobqueue')
     jobqueue.connect()
+    result_toll = {
+        'failed': 0,
+        'passed': 0,
+        'aborted': 0,
+    }
+
     while True:
         task = jobqueue.wait()
         log.debug("%s", task.data)
-        auto_job(task.data)
 
+        task_data = task.data
+        pos, num_images = task_data['pos']
+
+        if pos == 1:
+            params = copy.deepcopy(task_data['compose'])
+            params.update(result_toll)
+            fedmsg.publish('compose.running', **params)
+
+        result = auto_job(task_data)
+        result_toll[result] += 1
+
+        if pos == num_images:
+            params.update(result_toll)
+            fedmsg.publish('compose.complete', **params)
 
 if __name__ == '__main__':
     main()

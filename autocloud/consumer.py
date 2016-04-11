@@ -65,4 +65,8 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                             })
                             images.append(item)
 
+        num_images = len(images)
+        for pos, image in enumerate(images):
+            image.update({'pos': (pos+1, num_images)})
+
         produce_jobs(images)
