@@ -8,7 +8,8 @@ import sys
 
 from retask.queue import Queue
 
-from autocloud.models import init_model, JobDetails
+from autocloud.constants import SUCCESS, FAILED, ABORTED
+from autocloud.models import init_model, ComposeJobDetails
 from autocloud.producer import publish_to_fedmsg
 
 import logging
@@ -115,7 +116,6 @@ def auto_job(task_data):
     release = task_data['compose']['type']
     job_id = task_data['job_id']
 
-
     job_type = 'vm'
 
     # Just to make sure that we have runtime dirs
@@ -125,24 +125,22 @@ def auto_job(task_data):
     timestamp = datetime.datetime.now()
     data = None
     try:
-        data = session.query(JobDetails).get(str(job_id))
+        data = session.query(ComposeJobDetails).get(str(job_id))
         data.status = u'r'
         data.last_updated = timestamp
     except Exception as err:
         log.error("%s" % err)
-        log.error("%s: %s", taskid, image_url)
+        log.error("%s: %s", compose_id, compose_url)
     session.commit()
 
-    publish_to_fedmsg(topic='image.running',
-                      compose_url=compose_image_url,
-                      compose_id=compose_id,
-                      status='running',
-                      job_id=job_id,
-                      release=info['compose']['id'])
-
-    publish_to_fedmsg(topic='image.running', image_url=image_url,
-                      image_name=image_name, status='running', buildid=taskid,
-                      job_id=data.id, release=release)
+    params = {
+        'compose_url': compose_image_url,
+        'compose_id': compose_id,
+        'status': RUNNING,
+        'job_id': job_id,
+        'release': release
+    }
+    publish_to_fedmsg(topic='image.running', **params)
 
     # Now we have job queued, let us start the job.
 
@@ -154,10 +152,10 @@ def auto_job(task_data):
         image_cleanup(image_path)
         handle_err(session, data, out, err)
         log.debug("Return code: %d" % ret_code)
-        publish_to_fedmsg(topic='image.failed', image_url=image_url,
-                          image_name=image_name, status='failed',
-                          buildid=taskid, job_id=data.id, release=release)
-        return
+
+        params.update({'status': FAILED})
+        publish_to_fedmsg(topic='image.failed', **params)
+        return FAILED
 
     # Step 2: Create the conf file with correct image path.
     if basename.find('vagrant') == -1:
@@ -198,10 +196,9 @@ def auto_job(task_data):
         image_cleanup(image_path)
         handle_err(session, data, create_result_text(out), err)
         log.debug("Return code: %d" % ret_code)
-        publish_to_fedmsg(topic='image.failed', image_url=image_url,
-                          image_name=image_name, status='failed',
-                          buildid=taskid, job_id=data.id, release=release)
-        return
+        params.update({'status': FAILED})
+        publish_to_fedmsg(topic='image.failed', **params)
+        return FAILED
     else:
         image_cleanup(image_path)
 
@@ -217,17 +214,19 @@ def auto_job(task_data):
     data.output = com_text
     session.commit()
 
-    publish_to_fedmsg(topic='image.success', image_url=image_url,
-                      image_name=image_name, status='success', buildid=taskid,
-                      job_id=data.id, release=release)
+    params.update({'status': SUCCESS})
+    publish_to_fedmsg(topic='image.success', **params)
+    return SUCCESS
+
 
 def main():
     jobqueue = Queue('jobqueue')
     jobqueue.connect()
-    result_toll = {
-        'failed': 0,
-        'passed': 0,
-        'aborted': 0,
+
+    results = {
+        SUCCESS: 0,
+        FAILED: 0,
+        ABORTED: 0,
     }
 
     while True:
@@ -239,14 +238,14 @@ def main():
 
         if pos == 1:
             params = copy.deepcopy(task_data['compose'])
-            params.update(result_toll)
+            params.update({'results': results})
             publish_to_fedmsg(topic='compose.running', **params)
 
         result = auto_job(task_data)
-        result_toll[result] += 1
+        results[result] += 1
 
         if pos == num_images:
-            params.update(result_toll)
+            params.update({'results': results})
             publish_to_fedmsg(topic='compose.complete', **params)
 
 if __name__ == '__main__':
