@@ -37,11 +37,8 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
         if autocloud.VIRTUALBOX:
             _supported_images = ('Fedora-Cloud-Base-Vagrant',
-                                 'Fedora-Cloud-Atomic-Vagrant',)
-        else:
-            _supported_images = ('Fedora-Cloud-Base-Vagrant',
                                  'Fedora-Cloud-Atomic-Vagrant',
-                                 'Fedora-Cloud-Atomic', 'Fedora-Cloud-Base',)
+                                 'Fedora-Atomic-Vagrant',)
 
         for build in builds:
             log.info('Got Koji build {0}'.format(build))
@@ -57,7 +54,20 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
             #TODO: Change to get the release information from PDC instead
             # of koji once it is set up
             release = task_result.get('version')
-            if name in _supported_images:
+            if autocloud.VIRTUALBOX:
+                if name in _supported_images:
+                    task_relpath = koji.pathinfo.taskrelpath(int(builds[0]))
+                    url = get_image_url(task_result.get('files'), task_relpath)
+                    if url:
+                        name = get_image_name(image_name=name)
+                        data = {
+                            'buildid': builds[0],
+                            'image_url': url,
+                            'name': name,
+                            'release': release,
+                        }
+                        image_files.append(data)
+            else:
                 task_relpath = koji.pathinfo.taskrelpath(int(builds[0]))
                 url = get_image_url(task_result.get('files'), task_relpath)
                 if url:
@@ -80,8 +90,9 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                     continue
 
                 name = result[0].get('name')
-                if name not in _supported_images:
-                    continue
+                if autocloud.VIRTUALBOX:
+                    if name not in _supported_images:
+                        continue
 
                 #TODO: Change to get the release information from PDC instead
                 # of koji once it is set up
