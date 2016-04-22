@@ -205,11 +205,12 @@ def auto_job(task_data):
     else:
         image_cleanup(image_path)
 
-    out = create_result_text(out)
-    if job_type == 'vm':
-        com_text = out[out.find('/usr/bin/qemu-kvm'):]
-    else:
-        com_text = out
+    # Enabling direct stdout as output of the command
+    #out = create_result_text(out)
+    #if job_type == 'vm':
+    #    com_text = out[out.find('/usr/bin/qemu-kvm'):]
+    #else:
+    #    com_text = out
     data.status = u's'
     timestamp = datetime.datetime.now()
     data.last_updated = timestamp
