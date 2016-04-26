@@ -2,6 +2,7 @@
 
 import fedmsg.consumers
 import koji
+import requests
 
 import autocloud
 
@@ -29,6 +30,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
     config_key = 'autocloud.consumer.enabled'
 
     def __init__(self, *args, **kwargs):
+        log.info("Autocloud Consumer is ready for action.")
         super(AutoCloudConsumer, self).__init__(*args, **kwargs)
 
     def consume(self, msg):
@@ -38,12 +40,13 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         log.info('Received %r %r' % (msg['topic'], msg['body']['msg_id']))
 
         STATUS_F = ('FINISHED_INCOMPLETE', 'FINISHED',)
-        VARIANTS_F = ('Cloud', 'Server')
+        VARIANTS_F = ('CloudImages',)
 
         images = []
+        msg_body = msg['body']
 
-        if msg['body']['status'] in STATUS_F:
-            location = msg['body']['location']
+        if msg_body['msg']['status'] in STATUS_F:
+            location = msg_body['msg']['location']
             json_metadata = '{}/metadata/images.json'.format(location)
 
             resp = requests.get(json_metadata)

@@ -20,6 +20,11 @@ def produce_jobs(infox):
     jobqueue = Queue('jobqueue')
     jobqueue.connect()
 
+    family_mapping = {
+        'Cloud_Base': 'b',
+        'Atomic': 'a'
+    }
+
     session = init_model()
     timestamp = datetime.datetime.now()
     for info in infox:
@@ -27,12 +32,12 @@ def produce_jobs(infox):
             arch=info['arch'],
             compose_id=info['compose']['id'],
             created_on=timestamp,
-            family=info['family'],
-            image_url=info['absolute_url']
+            family=family_mapping[info['subvariant']],
+            image_url=info['absolute_path'],
             last_updated=timestamp,
             release=info['compose']['type'],
             status='q',
-            subvariant=info['subvariant']
+            subvariant=info['subvariant'],
             user='admin',
         )
         session.add(jd)

@@ -72,8 +72,8 @@ class ComposeJobDetails(Base):
     )
 
     IMAGE_FAMILY_TYPES = (
-        ('b', 'Base'),
-        ('a', 'Atomic')
+        ('b', u'Base'),
+        ('a', u'Atomic')
     )
 
     ARCH_TYPES = (
@@ -92,7 +92,6 @@ class ComposeJobDetails(Base):
     release = Column(String(255))
     status = Column(ChoiceType(STATUS_TYPES))
     subvariant = Column(String(255), nullable=False)
-    taskid = Column(String(255), nullable=False)
     user = Column(String(255), nullable=False)
 
 
