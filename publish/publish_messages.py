@@ -8,5 +8,4 @@ with open('publish/fixtures.json', 'r') as infile:
         time.sleep(1)
         fedmsg.publish(msg=raw_message['msg'],
                        topic='pungi.compose.status.change')
-        break
 
