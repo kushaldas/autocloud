@@ -61,16 +61,17 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 publish_to_fedmsg(topic='compose.queued', **compose_details)
 
                 for variant in VARIANTS_F:
-                    for arch, payload in compose_images[variant].iteritems():
-                        for item in payload:
-                            relative_path = item['path']
-                            absolute_path = '{}/{}'.format(location,
-                                                           relative_path)
-                            item.update({
-                                'compose': compose_details,
-                                'absolute_path': absolute_path,
-                            })
-                            images.append(item)
+                    if variant in compose_images:
+                        for arch, payload in compose_images[variant].iteritems():
+                            for item in payload:
+                                relative_path = item['path']
+                                absolute_path = '{}/{}'.format(location,
+                                                            relative_path)
+                                item.update({
+                                    'compose': compose_details,
+                                    'absolute_path': absolute_path,
+                                })
+                                images.append(item)
 
         num_images = len(images)
         for pos, image in enumerate(images):

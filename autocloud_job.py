@@ -8,7 +8,7 @@ import sys
 
 from retask.queue import Queue
 
-from autocloud.constants import SUCCESS, FAILED, ABORTED
+from autocloud.constants import SUCCESS, FAILED, ABORTED, RUNNING
 from autocloud.models import init_model, ComposeJobDetails
 from autocloud.producer import publish_to_fedmsg
 
@@ -130,7 +130,7 @@ def auto_job(task_data):
         data.last_updated = timestamp
     except Exception as err:
         log.error("%s" % err)
-        log.error("%s: %s", compose_id, compose_url)
+        log.error("%s: %s", compose_id, compose_image_url)
     session.commit()
 
     params = {
@@ -218,20 +218,23 @@ def auto_job(task_data):
     publish_to_fedmsg(topic='image.success', **params)
     return SUCCESS
 
-
-def main():
-    jobqueue = Queue('jobqueue')
-    jobqueue.connect()
-
-    results = {
+def initialize_results_dict():
+    return {
         SUCCESS: 0,
         FAILED: 0,
         ABORTED: 0,
     }
 
+def main():
+    jobqueue = Queue('jobqueue')
+    jobqueue.connect()
+
+    results = initialize_results_dict()
+
     while True:
         task = jobqueue.wait()
         log.debug("%s", task.data)
+
 
         task_data = task.data
         pos, num_images = task_data['pos']
@@ -245,8 +248,11 @@ def main():
         results[result] += 1
 
         if pos == num_images:
+            params = copy.deepcopy(task_data['compose'])
             params.update({'results': results})
             publish_to_fedmsg(topic='compose.complete', **params)
+            results = initialize_results_dict()
+
 
 if __name__ == '__main__':
     main()
