@@ -6,6 +6,7 @@ import requests
 
 import autocloud
 
+from autocloud.models import init_model
 from autocloud.producer import publish_to_fedmsg
 from autocloud.utils import is_valid_image, produce_jobs, get_image_name
 
@@ -43,6 +44,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         VARIANTS_F = ('CloudImages',)
 
         images = []
+        compose_db_update = False
         msg_body = msg['body']
 
         if msg_body['msg']['status'] in STATUS_F:
@@ -81,6 +83,18 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                                 'absolute_path': absolute_path,
                             })
                             images.append(item)
+                            compose_db_update = True
+
+
+        if compose_db_update:
+            session = init_model()
+            timstamp = datetime.datetime.now()
+
+            cd = ComposeDetails(**compose_details)
+
+            session.add(cd)
+            session.commit()
+
 
         num_images = len(images)
         for pos, image in enumerate(images):

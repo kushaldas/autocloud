@@ -58,6 +58,8 @@ class ComposeDetails(Base):
     compose_id = Column(String(255), nullable=False)
     respin = Column(Integer, primary_key=True)
     type = Column(String(255), nullable=False)
+    created_on = Column(DateTime, default=datetime.datetime.utcnow)
+    last_updated = Column(DateTime, default=datetime.datetime.utcnow)
 
 
 class ComposeJobDetails(Base):
