@@ -84,7 +84,12 @@ def create_result_text(out):
     """
     :param out: Output text from the command.
     """
-    result_filename = '/var/run/tunir/tunir_result.txt'
+    lines = out.splitlines()
+    for line in lines:
+        if line.startswith('Result file at:'):
+            result_filename = line.split(' ')[1]
+
+    result_filename = result_filename.strip()
     if os.path.exists(result_filename):
         new_content = ''
         with open(result_filename) as fobj:
@@ -95,6 +100,7 @@ def create_result_text(out):
         new_line_index = out[job_status_index:].find('\n')
         out = out[:job_status_index + new_line_index]
         out = out + '\n\n' + new_content
+        system('rm -f {0}'.format(result_filename))
         return out
     return out
 
@@ -111,7 +117,7 @@ def auto_job(task_data):
     # We will have to update the job information on DB, rather
     # than creating it. But we will do it afterwards.
 
-    compose_image_url = task_data['path']
+    compose_image_url = task_data['absolute_path']
     compose_id = task_data['compose']['id']
     release = task_data['compose']['type']
     job_id = task_data['job_id']
@@ -145,8 +151,10 @@ def auto_job(task_data):
     # Now we have job queued, let us start the job.
 
     # Step 1: Download the image
+    image_url = compose_image_url
     basename = os.path.basename(image_url)
     image_path = '/var/run/autocloud/%s' % basename
+    log.debug("Going to download {0}".format(image_url))
     out, err, ret_code = system('wget %s -O %s' % (image_url, image_path))
     if ret_code:
         image_cleanup(image_path)
@@ -159,7 +167,7 @@ def auto_job(task_data):
 
     # Step 2: Create the conf file with correct image path.
     if basename.find('vagrant') == -1:
-        conf = {"image": "file:///var/run/autocloud/%s" % basename,
+        conf = {"image": "/var/run/autocloud/%s" % basename,
                 "name": "fedora",
                 "password": "passw0rd",
                 "ram": 2048,
@@ -170,7 +178,7 @@ def auto_job(task_data):
         conf = {
             "name": "fedora",
             "type": "vagrant",
-            "image": "file:///var/run/autocloud/%s" % basename,
+            "image": "/var/run/autocloud/%s" % basename,
             "ram": 2048,
             "user": "vagrant",
             "port": "22"
@@ -187,9 +195,7 @@ def auto_job(task_data):
 
     system('/usr/bin/cp -f /etc/autocloud/fedora.txt /var/run/autocloud/fedora.txt')
 
-    cmd = 'tunir --job fedora --config-dir /var/run/autocloud/ --stateless'
-    if basename.find('Atomic') != -1 and job_type == 'vm':
-        cmd = 'tunir --job fedora --config-dir /var/run/autocloud/ --stateless --atomic'
+    cmd = 'tunir --job fedora --config-dir /var/run/autocloud/'
     # Now run tunir
     out, err, ret_code = system(cmd)
     if ret_code:
@@ -203,11 +209,11 @@ def auto_job(task_data):
         image_cleanup(image_path)
 
     # Enabling direct stdout as output of the command
-    #out = create_result_text(out)
-    #if job_type == 'vm':
-    #    com_text = out[out.find('/usr/bin/qemu-kvm'):]
-    #else:
-    #    com_text = out
+    out = create_result_text(out)
+    if job_type == 'vm':
+        com_text = out[out.find('/usr/bin/qemu-kvm'):]
+    else:
+        com_text = out
     data.status = u's'
     timestamp = datetime.datetime.now()
     data.last_updated = timestamp
