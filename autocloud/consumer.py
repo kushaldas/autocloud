@@ -7,7 +7,7 @@ import requests
 import autocloud
 
 from autocloud.producer import publish_to_fedmsg
-from autocloud.utils import get_image_url, produce_jobs, get_image_name
+from autocloud.utils import is_valid_image, produce_jobs, get_image_name
 
 import logging
 log = logging.getLogger("fedmsg")
@@ -60,18 +60,27 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
                 publish_to_fedmsg(topic='compose.queued', **compose_details)
 
+                compose_images = dict(
+                    (variant, compose_images[variant])
+                    for variant in VARIANTS_F
+                    if variant in compose_images
+                )
+
                 for variant in VARIANTS_F:
-                    if variant in compose_images:
-                        for arch, payload in compose_images[variant].iteritems():
-                            for item in payload:
-                                relative_path = item['path']
-                                absolute_path = '{}/{}'.format(location,
-                                                            relative_path)
-                                item.update({
-                                    'compose': compose_details,
-                                    'absolute_path': absolute_path,
-                                })
-                                images.append(item)
+                    for arch, payload in compose_images[variant].iteritems():
+                        for item in payload:
+                            relative_path = item['path']
+
+                            if not is_valid_image(relative_path):
+                                continue
+
+                            absolute_path = '{}/{}'.format(location,
+                                                        relative_path)
+                            item.update({
+                                'compose': compose_details,
+                                'absolute_path': absolute_path,
+                            })
+                            images.append(item)
 
         num_images = len(images)
         for pos, image in enumerate(images):

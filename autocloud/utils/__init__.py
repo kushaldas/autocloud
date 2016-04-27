@@ -59,23 +59,17 @@ def produce_jobs(infox):
                           release=info['compose']['id'])
 
 
-def get_image_url(task_list_output, task_relpath):
+def is_valid_image(image_url):
     if autocloud.VIRTUALBOX:
         supported_image_ext = ('.vagrant-virtualbox.box',)
     else:
         supported_image_ext = ('.qcow2', '.vagrant-libvirt.box')
-    url_template = "{file_location}/{file_name}"
-    images_list = [f for f in task_list_output if f.endswith(supported_image_ext)]
-    if not images_list:
-        return None
 
-    file_name = images_list[0]
+    if image_url.endswith(supported_image_ext):
+        return True
 
-    # extension to base URL to exact file directory
-    full_file_location = autocloud.BASE_KOJI_TASK_URL + task_relpath
+    return False
 
-    return url_template.format(file_location=full_file_location,
-                               file_name=file_name)
 
 def get_image_name(image_name):
     if 'vagrant' in image_name.lower():
