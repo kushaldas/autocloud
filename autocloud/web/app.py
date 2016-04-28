@@ -52,9 +52,54 @@ class JobDetailsPagination(RangeBasedPagination):
                     ComposeJobDetails.id < from_jobdetails.id)
 
 
+class ComposeDetailsPagination(RangeBasedPagination):
+    def get_page_link(self, page_key, limit):
+        get_params = dict(request.args)
+        get_params.update({
+            'from': page_key, 'limit': limit})
+        return url_for('compose_details', **dict(
+            [(key, value) for key, value in get_params.items()])
+        )
+
+    def order_queryset(self):
+        if self.direction == 'next':
+            self.queryset = self.queryset.order_by(desc(
+                ComposeDetails.id))
+        else:
+            self.queryset = self.queryset.order_by(ComposeDetails.id)
+
+    def filter_queryset(self):
+        if self.page_key is None:
+            return
+        from_jobdetails = session.query(ComposeDetails).get(self.page_key)
+        if from_jobdetails:
+            if self.direction == 'prev':
+                self.queryset = self.queryset.filter(
+                    ComposeDetails.id > from_jobdetails.id)
+            else:
+                self.queryset = self.queryset.filter(
+                    ComposeDetails.id < from_jobdetails.id)
+
+
 @app.route('/')
 def index():
     return flask.render_template('index.html')
+
+
+@app.route('/compose/')
+@app.route('/compose')
+def compose_details():
+    queryset = session.query(ComposeDetails)
+
+    limit = int(request.args.get('limit', 5))
+    compose_details, prev_link, next_link = ComposeDetailsPagination(
+        queryset, request.args.get('from'), limit, request.path,
+        request.referrer, dict(request.args)).paginate()
+
+    return flask.render_template(
+        'compose_details.html', compose_details=compose_details,
+        prev_link=prev_link, next_link=next_link
+    )
 
 
 @app.route('/jobs/<compose_pk>/')
