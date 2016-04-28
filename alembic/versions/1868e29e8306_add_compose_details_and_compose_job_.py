@@ -38,6 +38,8 @@ def upgrade():
         sa.Column('status', sa.String(length=255), nullable=False)
         sa.Column('subvariant', sa.String(length=255), nullable=False)
         sa.Column('user', sa.String(length=255), nullable=False),
+        sa.Column('image_format', sa.String(length=255), nullable=False),
+        sa.Column('image_type', sa.String(length=255), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     pass

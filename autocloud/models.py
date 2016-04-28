@@ -95,6 +95,8 @@ class ComposeJobDetails(Base):
     status = Column(ChoiceType(STATUS_TYPES))
     subvariant = Column(String(255), nullable=False)
     user = Column(String(255), nullable=False)
+    image_format = Column(String(255), nullable=False)
+    image_type = Column(String(255), nullable=False)
 
 
 def create_tables():
