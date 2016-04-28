@@ -56,7 +56,7 @@ class ComposeDetails(Base):
     id = Column(Integer, primary_key=True)
     date = Column(DateTime, nullable=False)
     compose_id = Column(String(255), nullable=False)
-    respin = Column(Integer, primary_key=True)
+    respin = Column(Integer, nullable=False)
     type = Column(String(255), nullable=False)
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
     last_updated = Column(DateTime, default=datetime.datetime.utcnow)
