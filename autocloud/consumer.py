@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import fedmsg.consumers
 import koji
 import requests
 
-import autocloud
+from datetime import datetime
 
-from autocloud.models import init_model
+import autocloud
+import fedmsg.consumers
+
+from autocloud.models import init_model, ComposeDetails
 from autocloud.producer import publish_to_fedmsg
 from autocloud.utils import is_valid_image, produce_jobs, get_image_name
 
@@ -88,13 +90,17 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
         if compose_db_update:
             session = init_model()
-            timstamp = datetime.datetime.now()
-
-            cd = ComposeDetails(**compose_details)
+            compose_date = datetime.strptime(compose_details['date'],
+                                                        '%Y%m%d')
+            cd = ComposeDetails(
+                date=compose_date,
+                compose_id=compose_details['id'],
+                respin=compose_details['respin'],
+                type=compose_details['type']
+            )
 
             session.add(cd)
             session.commit()
-
 
         num_images = len(images)
         for pos, image in enumerate(images):
