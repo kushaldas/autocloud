@@ -9,7 +9,7 @@ import sys
 from retask.queue import Queue
 
 from autocloud.constants import SUCCESS, FAILED, ABORTED, RUNNING
-from autocloud.models import init_model, ComposeJobDetails
+from autocloud.models import init_model, ComposeJobDetails, ComposeDetails
 from autocloud.producer import publish_to_fedmsg
 
 import logging
@@ -163,7 +163,7 @@ def auto_job(task_data):
 
         params.update({'status': FAILED})
         publish_to_fedmsg(topic='image.failed', **params)
-        return FAILED
+        return FAILED, check_status_of_compose_image(compose_id)
 
     # Step 2: Create the conf file with correct image path.
     if basename.find('vagrant') == -1:
@@ -204,7 +204,7 @@ def auto_job(task_data):
         log.debug("Return code: %d" % ret_code)
         params.update({'status': FAILED})
         publish_to_fedmsg(topic='image.failed', **params)
-        return FAILED
+        return FAILED, check_status_of_compose_image(compose_id)
     else:
         image_cleanup(image_path)
 
@@ -214,6 +214,7 @@ def auto_job(task_data):
         com_text = out[out.find('/usr/bin/qemu-kvm'):]
     else:
         com_text = out
+
     data.status = u's'
     timestamp = datetime.datetime.now()
     data.last_updated = timestamp
@@ -222,7 +223,24 @@ def auto_job(task_data):
 
     params.update({'status': SUCCESS})
     publish_to_fedmsg(topic='image.success', **params)
-    return SUCCESS
+    return SUCCESS, check_status_of_compose_image(compose_id)
+
+
+def check_status_of_compose_image(compose_id):
+    session = init_model()
+    compose_job_objs = session.query(ComposeJobDetails).filter_by(
+        compose_id=compose_id).all()
+    compose_obj = session.query(ComposeJob).filter_by(
+        compose_id_compose_id).first()
+
+    for compose_obj in compose_objs:
+        status = compose.status.code
+        if status in ('r', 'q'):
+            return False
+
+    publish_to_fedmsg(topic='compose.complete', **params)
+    return True
+
 
 def initialize_results_dict():
     return {
@@ -241,8 +259,8 @@ def main():
         task = jobqueue.wait()
         log.debug("%s", task.data)
 
-
         task_data = task.data
+
         pos, num_images = task_data['pos']
 
         if pos == 1:
