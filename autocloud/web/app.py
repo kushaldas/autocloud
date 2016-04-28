@@ -1,20 +1,26 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
-import flask
-from flask import request, url_for
-import flask.ext.restless
+
 import os
+
+import flask
+import flask.ext.restless
+
+from flask import request, url_for
 from sqlalchemy import desc
+
+import autocloud
+
 from autocloud.models import init_model
-from autocloud.models import JobDetails
+from autocloud.models import JobDetails, ComposeJobDetails, ComposeDetails
 from autocloud.web.pagination import RangeBasedPagination
 from autocloud.web.utils import get_object_or_404
-import autocloud
 
 app = flask.Flask(__name__)
 
 session = init_model()
+
 
 class JobDetailsPagination(RangeBasedPagination):
 
@@ -29,21 +35,21 @@ class JobDetailsPagination(RangeBasedPagination):
     def order_queryset(self):
         if self.direction == 'next':
             self.queryset = self.queryset.order_by(desc(
-                JobDetails.id))
+                ComposeJobDetails.id))
         else:
-            self.queryset = self.queryset.order_by(JobDetails.id)
+            self.queryset = self.queryset.order_by(ComposeJobDetails.id)
 
     def filter_queryset(self):
         if self.page_key is None:
             return
-        from_jobdetails = session.query(JobDetails).get(self.page_key)
+        from_jobdetails = session.query(ComposeJobDetails).get(self.page_key)
         if from_jobdetails:
             if self.direction == 'prev':
                 self.queryset = self.queryset.filter(
-                    JobDetails.id > from_jobdetails.id)
+                    ComposeJobDetails.id > from_jobdetails.id)
             else:
                 self.queryset = self.queryset.filter(
-                    JobDetails.id < from_jobdetails.id)
+                    ComposeJobDetails.id < from_jobdetails.id)
 
 
 @app.route('/')
@@ -51,18 +57,21 @@ def index():
     return flask.render_template('index.html')
 
 
-@app.route('/jobs')
-@app.route('/jobs/')
-def job_details():
-    queryset = session.query(JobDetails)
+@app.route('/jobs/<compose_pk>/')
+@app.route('/jobs/<compose_pk>')
+def job_details(compose_pk):
+    compose_obj = session.query(ComposeDetails).get(compose_pk)
+    compose_id = compose_obj.compose_id
+
+    queryset = session.query(ComposeJobDetails).filter_by(compose_id=compose_id)
 
     # Apply filters
-    filters = ('family', 'arch', 'release', 'status')
+    filters = ('family', 'arch', 'status')
     selected_filters = {}
     for filter in filters:
         if request.args.get(filter):
             queryset = queryset.filter(
-                getattr(JobDetails, filter) == request.args[filter])
+                getattr(ComposeJobDetails, filter) == request.args[filter])
             selected_filters[filter] = request.args[filter]
 
     limit = int(request.args.get('limit', 50))
@@ -72,15 +81,15 @@ def job_details():
         request.referrer, dict(request.args)).paginate()
     filter_fields = (
         {'label': 'Family', 'name': 'family',
-         'options': JobDetails.IMAGE_FAMILY_TYPES},
+         'options': ComposeJobDetails.IMAGE_FAMILY_TYPES},
         {'label': 'Architecture', 'name': 'arch',
-         'options': JobDetails.ARCH_TYPES},
+         'options': ComposeJobDetails.ARCH_TYPES},
         {'label': 'Release', 'name': 'release',
          'options': [(value[0], value[0])
                      for value in session.query(
-                         JobDetails.release).distinct()]},
+                         ComposeJobDetails.release).distinct()]},
         {'label': 'Status', 'name': 'status',
-         'options': JobDetails.STATUS_TYPES}
+         'options': ComposeJobDetails.STATUS_TYPES}
 
     )
     return flask.render_template(
@@ -92,7 +101,10 @@ def job_details():
 
 @app.route('/jobs/<jobid>/output')
 def job_output(jobid):
-    job = get_object_or_404(session, JobDetails, JobDetails.id == jobid)
+    job = get_object_or_404(session,
+                            ComposeJobDetails,
+                            ComposeJobDetails.id == jobid)
+
     return flask.render_template(
         'job_output.html', job=job)
 
