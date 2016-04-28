@@ -41,7 +41,7 @@
   <table class="table table-hover">
     <thead>
       <tr>
-        <th>Task ID</th>
+        <th>Compose ID</th>
         <th>Family</th>
         <th>Architecture</th>
         <th>Release</th>
@@ -55,7 +55,7 @@
       {% for job_detail in job_details %}
         <tr>
           <td>
-            <a href="http://koji.fedoraproject.org/koji/taskinfo?taskID={{ job_detail.taskid }}" target="_blank">{{ job_detail.taskid }}</a>
+            <a href="http://koji.fedoraproject.org/koji/taskinfo?taskID={{ job_detail.taskid }}" target="_blank">{{ job_detail.compose_id }}</a>
           </td>
           <td>
             {{ job_detail.family }}
@@ -81,8 +81,8 @@
                   {{ job_detail.status }}
               </span>
           </td>
-          <td>{{ job_detail.created_on }}</td>
-          <td>{{ job_detail.last_updated }}</td>
+          <td>{{ job_detail.created_on.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td>{{ job_detail.last_updated.strftime('%Y-%m-%d %H:%M:%S') }}</td>
           <td><a class="btn btn-primary btn-sm" href="{{ url_for('job_output', jobid=job_detail.id) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Output</a></td>
         </tr>
       {% else %}

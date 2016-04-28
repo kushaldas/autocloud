@@ -101,14 +101,18 @@ def compose_details():
         prev_link=prev_link, next_link=next_link
     )
 
-
+@app.route('/jobs/')
+@app.route('/jobs')
 @app.route('/jobs/<compose_pk>/')
 @app.route('/jobs/<compose_pk>')
-def job_details(compose_pk):
-    compose_obj = session.query(ComposeDetails).get(compose_pk)
-    compose_id = compose_obj.compose_id
+def job_details(compose_pk=None):
+    queryset = session.query(ComposeJobDetails)
 
-    queryset = session.query(ComposeJobDetails).filter_by(compose_id=compose_id)
+    if compose_pk is not None:
+        compose_obj = session.query(ComposeDetails).get(compose_pk)
+        compose_id = compose_obj.compose_id
+
+        queryset = queryset.filter_by(compose_id=compose_id)
 
     # Apply filters
     filters = ('family', 'arch', 'status')
