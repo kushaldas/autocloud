@@ -39,6 +39,8 @@ def produce_jobs(infox):
             status='q',
             subvariant=info['subvariant'],
             user='admin',
+            image_format=info['format'],
+            image_type=info['type'],
         )
         session.add(jd)
         session.commit()

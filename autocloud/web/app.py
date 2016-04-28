@@ -115,7 +115,7 @@ def job_details(compose_pk=None):
         queryset = queryset.filter_by(compose_id=compose_id)
 
     # Apply filters
-    filters = ('family', 'arch', 'status')
+    filters = ('family', 'arch', 'status', 'image_type')
     selected_filters = {}
     for filter in filters:
         if request.args.get(filter):
@@ -133,10 +133,10 @@ def job_details(compose_pk=None):
          'options': ComposeJobDetails.IMAGE_FAMILY_TYPES},
         {'label': 'Architecture', 'name': 'arch',
          'options': ComposeJobDetails.ARCH_TYPES},
-        {'label': 'Release', 'name': 'release',
+        {'label': 'Type', 'name': 'image_type',
          'options': [(value[0], value[0])
                      for value in session.query(
-                         ComposeJobDetails.release).distinct()]},
+                         ComposeJobDetails.image_type).distinct()]},
         {'label': 'Status', 'name': 'status',
          'options': ComposeJobDetails.STATUS_TYPES}
 

@@ -45,6 +45,7 @@
         <th>Family</th>
         <th>Architecture</th>
         <th>Release</th>
+        <th>Type</th>
         <th>Status</th>
         <th>Created</th>
         <th>Last updated</th>
@@ -65,6 +66,9 @@
           </td>
           <td>
             {{ job_detail.release }}
+          </td>
+          <td>
+            {{ job_detail.image_type }}
           </td>
           <td>
               {% if job_detail.status == 's' %}
