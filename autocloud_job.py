@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import copy
+import collections
 import datetime
 import json
 import os
@@ -16,6 +17,9 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
+
+tree = lambda: collections.defaultdict(tree)
+results = tree()
 
 def handle_err(session, data, out, err):
     """
@@ -46,6 +50,7 @@ def system(cmd):
     returncode = ret.returncode
     return out, err, returncode
 
+
 def refresh_storage_pool():
     '''Refreshes libvirt storage pool.
 
@@ -60,6 +65,7 @@ def refresh_storage_pool():
                 if words[1] == 'active':
                     system('virsh pool-refresh {0}'.format(words[0]))
 
+
 def image_cleanup(image_path):
     """
     Delete the image if it is processed or if there is any exception occur
@@ -71,6 +77,7 @@ def image_cleanup(image_path):
             os.remove(image_path)
         except OSError as e:
             log.error('Error: %s - %s.', e.filename, e.strerror)
+
 
 def create_dirs():
     """
@@ -103,6 +110,7 @@ def create_result_text(out):
         system('rm -f {0}'.format(result_filename))
         return out
     return out
+
 
 def auto_job(task_data):
     """
@@ -230,52 +238,51 @@ def check_status_of_compose_image(compose_id):
     session = init_model()
     compose_job_objs = session.query(ComposeJobDetails).filter_by(
         compose_id=compose_id).all()
-    compose_obj = session.query(ComposeJob).filter_by(
-        compose_id_compose_id).first()
+    compose_obj = session.query(ComposeDetails).filter_by(
+        compose_id=compose_id).first()
 
-    for compose_obj in compose_objs:
-        status = compose.status.code
+    for compose_job_obj in compose_job_objs:
+        status = compose_job_obj.status.code
         if status in ('r', 'q'):
             return False
 
+        if status in ('s',):
+            results[compose_id][SUCCESS] = results[compose_id].get(SUCCESS, 0) + 1
+        elif status in ('f', 'a'):
+            results[compose_id][FAILED] = results[compose_id].get(FAILED, 0) + 1
+
+    params = {
+        'compose_id': compose_obj.compose_id,
+        'respin': compose_obj.respin,
+        'type': compose_obj.type,
+        'date': datetime.datetime.strftime(compose_obj.date, '%Y%m%d'),
+        'results': results[compose_id],
+    }
+
     publish_to_fedmsg(topic='compose.complete', **params)
+    results.pop(compose_id, {})
+
     return True
 
-
-def initialize_results_dict():
-    return {
-        SUCCESS: 0,
-        FAILED: 0,
-        ABORTED: 0,
-    }
 
 def main():
     jobqueue = Queue('jobqueue')
     jobqueue.connect()
-
-    results = initialize_results_dict()
 
     while True:
         task = jobqueue.wait()
         log.debug("%s", task.data)
 
         task_data = task.data
-
         pos, num_images = task_data['pos']
 
+        compose_details = task_data['compose']
         if pos == 1:
-            params = copy.deepcopy(task_data['compose'])
-            params.update({'results': results})
+            params = copy.deepcopy(compose_details)
             publish_to_fedmsg(topic='compose.running', **params)
 
-        result = auto_job(task_data)
-        results[result] += 1
+        result, running_status = auto_job(task_data)
 
-        if pos == num_images:
-            params = copy.deepcopy(task_data['compose'])
-            params.update({'results': results})
-            publish_to_fedmsg(topic='compose.complete', **params)
-            results = initialize_results_dict()
 
 
 if __name__ == '__main__':
