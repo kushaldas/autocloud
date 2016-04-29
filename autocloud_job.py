@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import copy
-import collections
 import datetime
 import json
 import os
 import subprocess
 import sys
+
+from collections import defaultdict
 
 from retask.queue import Queue
 
@@ -18,7 +19,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
-tree = lambda: collections.defaultdict(tree)
+tree = lambda: defaultdict(tree)
 results = tree()
 
 def handle_err(session, data, out, err):
@@ -240,6 +241,8 @@ def check_status_of_compose_image(compose_id):
     compose_obj = session.query(ComposeDetails).filter_by(
         compose_id=compose_id).first()
 
+    is_running = False
+
     for compose_job_obj in compose_job_objs:
         status = compose_job_obj.status.code
         if status in ('r', 'q'):
@@ -257,8 +260,12 @@ def check_status_of_compose_image(compose_id):
         elif status in ('f', 'a'):
             results[compose_id][FAILED] = results[compose_id].get(FAILED, 0) + 1
 
-    compose_obj.passed = results[compose_id][SUCCESS]
-    compose_obj.failed = results[compose_id][FAILED]
+    compose_obj.passed = (0 if isinstance(results[compose_id][SUCCESS],
+                                          defaultdict)
+                          else results[compose_id][SUCCESS])
+    compose_obj.failed = (0 if isinstance(results[compose_id][FAILED],
+                                          defaultdict)
+                          else results[compose_id][FAILED])
     compose_obj.status = u'c'
 
     session.commit()
@@ -292,11 +299,12 @@ def main():
 
         if pos == 1:
             session = init_model()
-            compose_id= compose_details = compose_details['id']
+            compose_id = compose_details['id']
             compose_obj = session.query(ComposeDetails).filter_by(
                 compose_id=compose_id).first()
             compose_obj.status = u'r'
             session.commit()
+
 
             params = copy.deepcopy(compose_details)
             publish_to_fedmsg(topic='compose.running', **params)

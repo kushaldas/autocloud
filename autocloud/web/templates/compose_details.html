@@ -20,10 +20,11 @@
     <thead>
       <tr>
         <th>Compose ID</th>
-        <!--<th>Status</th>-->
+        <th>Status</th>
         <th>Date</th>
         <th>Type</th>
         <th>Respin</th>
+        <th>Overview</th>
         <th></th>
       </tr>
     </thead>
@@ -33,7 +34,6 @@
           <td>
             {{ compose_detail.compose_id }}
           </td>
-          <!--
           <td>
               {% if compose_detail.status == 'c' %}
                 <span class="label label-success glyphicon glyphicon-ok">
@@ -46,8 +46,7 @@
               {% endif %}
                   {{ compose_detail.status }}
               </span>
-          </td
-          -->
+          </td>
           <td>
             {{ compose_detail.date.strftime('%Y-%m-%d') }}
           </td>
@@ -56,6 +55,10 @@
           </td>
           <td>
             {{ compose_detail.respin }}
+          </td>
+          <td>
+            <i class="label label-success glyphicon glyphicon-ok i-b"></i> {{ compose_detail.passed }} / 
+            <i class="label label-danger glyphicon glyphicon-remove i-b"></i> {{ compose_detail.failed }}
           </td>
           <td><a class="btn btn-primary btn-sm" href="{{ url_for('job_details', compose_pk=compose_detail.id) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Results</a></td>
         </tr>

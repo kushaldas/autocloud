@@ -65,7 +65,7 @@ class ComposeDetails(Base):
     type = Column(String(255), nullable=False)
     passed = Column(Integer, nullable=True, default=0)
     failed = Column(Integer, nullable=True, default=0)
-    status = Coummn(ChoiceType(STATUS_TYPES))
+    status = Column(ChoiceType(STATUS_TYPES))
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
     last_updated = Column(DateTime, default=datetime.datetime.utcnow)
 
