@@ -62,8 +62,6 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 compose_images = compose_images_json['payload']['images']
                 compose_details = compose_images_json['payload']['compose']
 
-                publish_to_fedmsg(topic='compose.queued', **compose_details)
-
                 compose_images = dict(
                     (variant, compose_images[variant])
                     for variant in VARIANTS_F
@@ -96,11 +94,14 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 date=compose_date,
                 compose_id=compose_details['id'],
                 respin=compose_details['respin'],
-                type=compose_details['type']
+                type=compose_details['type'],
+                status=u'q',
             )
 
             session.add(cd)
             session.commit()
+
+            publish_to_fedmsg(topic='compose.queued', **compose_details)
 
         num_images = len(images)
         for pos, image in enumerate(images):

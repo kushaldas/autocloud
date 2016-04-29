@@ -157,7 +157,6 @@ def auto_job(task_data):
     publish_to_fedmsg(topic='image.running', **params)
 
     # Now we have job queued, let us start the job.
-
     # Step 1: Download the image
     image_url = compose_image_url
     basename = os.path.basename(image_url)
@@ -244,12 +243,25 @@ def check_status_of_compose_image(compose_id):
     for compose_job_obj in compose_job_objs:
         status = compose_job_obj.status.code
         if status in ('r', 'q'):
-            return False
+            is_running = True
+            break
+
+    if is_running:
+        return False
+
+    for compose_job_obj in compose_job_objs:
+        status = compose_job_obj.status.code
 
         if status in ('s',):
             results[compose_id][SUCCESS] = results[compose_id].get(SUCCESS, 0) + 1
         elif status in ('f', 'a'):
             results[compose_id][FAILED] = results[compose_id].get(FAILED, 0) + 1
+
+    compose_obj.passed = results[compose_id][SUCCESS]
+    compose_obj.failed = results[compose_id][FAILED]
+    compose_obj.status = u'c'
+
+    session.commit()
 
     params = {
         'compose_id': compose_obj.compose_id,
@@ -277,7 +289,15 @@ def main():
         pos, num_images = task_data['pos']
 
         compose_details = task_data['compose']
+
         if pos == 1:
+            session = init_model()
+            compose_id= compose_details = compose_details['id']
+            compose_obj = session.query(ComposeDetails).filter_by(
+                compose_id=compose_id).first()
+            compose_obj.status = u'r'
+            session.commit()
+
             params = copy.deepcopy(compose_details)
             publish_to_fedmsg(topic='compose.running', **params)
 

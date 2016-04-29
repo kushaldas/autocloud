@@ -53,11 +53,19 @@ class JobDetails(Base):
 class ComposeDetails(Base):
     __tablename__ = 'compose_details'
 
+    STATUS_TYPES = (
+        ('c', 'Complete'),
+        ('q', 'Queued'),
+        ('r', 'Running'),
+    )
     id = Column(Integer, primary_key=True)
     date = Column(DateTime, nullable=False)
     compose_id = Column(String(255), nullable=False)
     respin = Column(Integer, nullable=False)
     type = Column(String(255), nullable=False)
+    passed = Column(Integer, nullable=True, default=0)
+    failed = Column(Integer, nullable=True, default=0)
+    status = Coummn(ChoiceType(STATUS_TYPES))
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
     last_updated = Column(DateTime, default=datetime.datetime.utcnow)
 
