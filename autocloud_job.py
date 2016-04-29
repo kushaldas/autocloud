@@ -290,7 +290,6 @@ def main():
 
     while True:
         task = jobqueue.wait()
-        log.debug("%s", task.data)
 
         task_data = task.data
         pos, num_images = task_data['pos']

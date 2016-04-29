@@ -86,25 +86,26 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                             compose_db_update = True
 
 
-        if compose_db_update:
-            session = init_model()
-            compose_date = datetime.strptime(compose_details['date'],
-                                                        '%Y%m%d')
-            cd = ComposeDetails(
-                date=compose_date,
-                compose_id=compose_details['id'],
-                respin=compose_details['respin'],
-                type=compose_details['type'],
-                status=u'q',
-            )
+            if compose_db_update:
+                session = init_model()
+                compose_date = datetime.strptime(compose_details['date'],
+                                                            '%Y%m%d')
+                cd = ComposeDetails(
+                    date=compose_date,
+                    compose_id=compose_details['id'],
+                    respin=compose_details['respin'],
+                    type=compose_details['type'],
+                    status=u'q',
+                    location=location,
+                )
 
-            session.add(cd)
-            session.commit()
+                session.add(cd)
+                session.commit()
 
-            publish_to_fedmsg(topic='compose.queued', **compose_details)
+                publish_to_fedmsg(topic='compose.queued', **compose_details)
 
-        num_images = len(images)
-        for pos, image in enumerate(images):
-            image.update({'pos': (pos+1, num_images)})
+            num_images = len(images)
+            for pos, image in enumerate(images):
+                image.update({'pos': (pos+1, num_images)})
 
-        produce_jobs(images)
+            produce_jobs(images)

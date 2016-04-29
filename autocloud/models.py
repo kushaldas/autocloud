@@ -68,6 +68,7 @@ class ComposeDetails(Base):
     status = Column(ChoiceType(STATUS_TYPES))
     created_on = Column(DateTime, default=datetime.datetime.utcnow)
     last_updated = Column(DateTime, default=datetime.datetime.utcnow)
+    location = Column(String(255), nullable=False)
 
 
 class ComposeJobDetails(Base):

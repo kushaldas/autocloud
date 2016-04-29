@@ -96,9 +96,16 @@ def compose_details():
         queryset, request.args.get('from'), limit, request.path,
         request.referrer, dict(request.args)).paginate()
 
+    compose_ids = [item.compose_id for item in compose_details]
+    compose_locations = dict(session.query(
+        ComposeDetails.compose_id,
+        ComposeDetails.location).filter(
+            ComposeDetails.compose_id.in_(compose_ids)).all())
+
     return flask.render_template(
         'compose_details.html', compose_details=compose_details,
-        prev_link=prev_link, next_link=next_link
+        prev_link=prev_link, next_link=next_link,
+        compose_locations=compose_locations
     )
 
 @app.route('/jobs/')
@@ -139,12 +146,18 @@ def job_details(compose_pk=None):
                          ComposeJobDetails.image_type).distinct()]},
         {'label': 'Status', 'name': 'status',
          'options': ComposeJobDetails.STATUS_TYPES}
-
     )
+
+    compose_ids = [item.compose_id for item in job_details]
+    compose_locations = dict(session.query(
+        ComposeDetails.compose_id,
+        ComposeDetails.location).filter(
+            ComposeDetails.compose_id.in_(compose_ids)).all())
+
     return flask.render_template(
         'job_details.html', job_details=job_details, prev_link=prev_link,
         next_link=next_link, filter_fields=filter_fields,
-        selected_filters=selected_filters
+        selected_filters=selected_filters, compose_locations=compose_locations,
     )
 
 

@@ -32,7 +32,7 @@
       {% for compose_detail in compose_details %}
         <tr>
           <td>
-            {{ compose_detail.compose_id }}
+              <a href="{{ compose_locations[compose_detail.compose_id] }}" target="_blank">{{ compose_detail.compose_id }}</a>
           </td>
           <td>
               {% if compose_detail.status == 'c' %}
