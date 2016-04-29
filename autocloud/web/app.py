@@ -163,12 +163,21 @@ def job_details(compose_pk=None):
 
 @app.route('/jobs/<jobid>/output')
 def job_output(jobid):
-    job = get_object_or_404(session,
+    job_detail = get_object_or_404(session,
                             ComposeJobDetails,
                             ComposeJobDetails.id == jobid)
 
+    _id = session.query(ComposeDetails.id).filter_by(
+        compose_id=job_detail.compose_id).all()[0][0]
+
+    compose_locations = dict(session.query(
+        ComposeDetails.compose_id,
+        ComposeDetails.location).filter(
+            ComposeDetails.compose_id.in_(job_detail.compose_id)).all())
+
     return flask.render_template(
-        'job_output.html', job=job)
+        'job_output.html', job_detail=job_detail,
+        compose_locations=compose_locations, _id=_id)
 
 
 # API stuff
