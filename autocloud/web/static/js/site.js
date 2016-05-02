@@ -85,4 +85,20 @@ $(document).ready(function() {
         var now = Math.floor(new Date().getTime() / 1000.0);
         load_examples(1, now);
     }
+
+    function autocloud_message() {
+        var message = "                _             _                 _ \n\
+     __ _ _   _| |_ ___   ___| | ___  _   _  __| |\n\
+    / _` | | | | __/ _ \\ / __| |/ _ \\| | | |/ _` |\n\
+   | (_| | |_| | || (_) | (__| | (_) | |_| | (_| |\n\
+    \\__,_|\\__,_|\\__\\___/ \\___|_|\\___/ \\__,_|\\__,_|\n\
+                                                   \n\
+=======================================================\n\
+  Looking forward to contribute to the project?\n\
+  Head over to https://github.com/kushaldas/autocloud  \n\
+=======================================================\n\
+";
+        console.log(message);
+    }
+    setTimeout(autocloud_message, 1000);
 });
