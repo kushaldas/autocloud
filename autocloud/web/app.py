@@ -7,8 +7,9 @@ import os
 import flask
 import flask.ext.restless
 
-from flask import request, url_for
+from flask import request, url_for, render_template
 from sqlalchemy import desc
+from werkzeug.exceptions import abort
 
 import autocloud
 
@@ -18,7 +19,6 @@ from autocloud.web.pagination import RangeBasedPagination
 from autocloud.web.utils import get_object_or_404
 
 app = flask.Flask(__name__)
-
 session = init_model()
 
 
@@ -117,6 +117,9 @@ def job_details(compose_pk=None):
 
     if compose_pk is not None:
         compose_obj = session.query(ComposeDetails).get(compose_pk)
+        if compose_obj is None:
+            abort(404)
+
         compose_id = compose_obj.compose_id
 
         queryset = queryset.filter_by(compose_id=compose_id)
@@ -179,6 +182,10 @@ def job_output(jobid):
         'job_output.html', job_detail=job_detail,
         compose_locations=compose_locations, _id=_id)
 
+# Custom Error pages
+@app.errorhandler(404)
+def page_not_found(e):
+        return render_template('404.html'), 404
 
 # API stuff
 apimanager = flask.ext.restless.APIManager(app, session=session)
