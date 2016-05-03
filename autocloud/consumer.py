@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 
 import koji
 import requests
-
-from datetime import datetime
+import fedmsg.consumers
+import fedfind.release
 
 import autocloud
-import fedmsg.consumers
 
 from autocloud.models import init_model, ComposeDetails
 from autocloud.producer import publish_to_fedmsg
@@ -68,6 +68,12 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                     if variant in compose_images
                 )
 
+                compose_id = compose_details['id']
+                rel = fedfind.release.get_release(cid=compose_id)
+                release = rel.release
+
+                compose_details.update({'release': release})
+
                 for variant in VARIANTS_F:
                     for arch, payload in compose_images[variant].iteritems():
                         for item in payload:
@@ -78,6 +84,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
                             absolute_path = '{}/{}'.format(location,
                                                         relative_path)
+
                             item.update({
                                 'compose': compose_details,
                                 'absolute_path': absolute_path,

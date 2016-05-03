@@ -8,6 +8,8 @@ import sys
 
 from collections import defaultdict
 
+import fedfind.release
+
 from retask.queue import Queue
 
 from autocloud.constants import SUCCESS, FAILED, ABORTED, RUNNING
@@ -128,8 +130,9 @@ def auto_job(task_data):
 
     compose_image_url = task_data['absolute_path']
     compose_id = task_data['compose']['id']
-    release = task_data['compose']['type']
+    release = task_data['compose']['release']
     job_id = task_data['job_id']
+    image_type = task_data['type']
 
     job_type = 'vm'
 
@@ -153,7 +156,9 @@ def auto_job(task_data):
         'compose_id': compose_id,
         'status': RUNNING,
         'job_id': job_id,
-        'release': release
+        'release': release,
+        'family': data.family.value,
+        'type': image_type,
     }
     publish_to_fedmsg(topic='image.running', **params)
 
@@ -260,15 +265,21 @@ def check_status_of_compose_image(compose_id):
         elif status in ('f', 'a'):
             results[compose_id][FAILED] = results[compose_id].get(FAILED, 0) + 1
 
-    compose_obj.passed = (0 if isinstance(results[compose_id][SUCCESS],
-                                          defaultdict)
-                          else results[compose_id][SUCCESS])
-    compose_obj.failed = (0 if isinstance(results[compose_id][FAILED],
-                                          defaultdict)
-                          else results[compose_id][FAILED])
+    if isinstance(results[compose_id][SUCCESS], defaultdict):
+        results[compose_id][SUCCESS] = 0
+
+    if isinstance(results[compose_id][FAILED], defaultdict):
+        results[compose_id][FAILED] = 0
+
+    compose_obj.passed = results[compose_id][SUCCESS]
+    compose_obj.failed = results[compose_id][FAILED]
     compose_obj.status = u'c'
 
     session.commit()
+
+    compose_id = compose_obj.compose_id
+    rel = fedfind.release.get_release(cid=compose_id)
+    release = rel.release
 
     params = {
         'compose_id': compose_obj.compose_id,
@@ -276,6 +287,7 @@ def check_status_of_compose_image(compose_id):
         'type': compose_obj.type,
         'date': datetime.datetime.strftime(compose_obj.date, '%Y%m%d'),
         'results': results[compose_id],
+        'release': release,
     }
 
     publish_to_fedmsg(topic='compose.complete', **params)

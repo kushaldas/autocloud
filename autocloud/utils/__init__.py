@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import fedfind.release
 
 from retask.task import Task
 from retask.queue import Queue
@@ -35,7 +36,7 @@ def produce_jobs(infox):
             family=family_mapping[info['subvariant']],
             image_url=info['absolute_path'],
             last_updated=timestamp,
-            release=info['compose']['type'],
+            release=info['compose']['release'],
             status='q',
             subvariant=info['subvariant'],
             user='admin',
@@ -58,7 +59,9 @@ def produce_jobs(infox):
                           compose_id=info['compose']['id'],
                           status='queued',
                           job_id=info['job_id'],
-                          release=info['compose']['id'])
+                          release=info['compose']['release'],
+                          family=jd.family.value,
+                          type=info['type'])
 
 
 def is_valid_image(image_url):
