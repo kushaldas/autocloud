@@ -109,6 +109,10 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 session.add(cd)
                 session.commit()
 
+                compose_details.update({
+                    'status': 'queued',
+                    'compose_job_id': cd.id,
+                })
                 publish_to_fedmsg(topic='compose.queued', **compose_details)
 
             num_images = len(images)

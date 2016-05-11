@@ -288,6 +288,8 @@ def check_status_of_compose_image(compose_id):
         'date': datetime.datetime.strftime(compose_obj.date, '%Y%m%d'),
         'results': results[compose_id],
         'release': release,
+        'status': 'completed',
+        'compose_job_id': compose_obj.id
     }
 
     publish_to_fedmsg(topic='compose.complete', **params)
@@ -318,6 +320,7 @@ def main():
 
 
             params = copy.deepcopy(compose_details)
+            params.update({'status': 'running'})
             publish_to_fedmsg(topic='compose.running', **params)
 
         result, running_status = auto_job(task_data)
