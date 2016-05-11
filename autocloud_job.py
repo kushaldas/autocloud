@@ -159,6 +159,7 @@ def auto_job(task_data):
         'release': release,
         'family': data.family.value,
         'type': image_type,
+        'image_name': data.image_name,
     }
     publish_to_fedmsg(topic='image.running', **params)
 

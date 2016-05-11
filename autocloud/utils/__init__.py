@@ -29,7 +29,7 @@ def produce_jobs(infox):
     session = init_model()
     timestamp = datetime.datetime.now()
     for info in infox:
-        image_name = info['path'].split('.x86_64')[0]
+        image_name = info['path'].split('.x86_64')[0].split('/')[-1]
         jd = ComposeJobDetails(
             arch=info['arch'],
             compose_id=info['compose']['id'],
@@ -57,7 +57,7 @@ def produce_jobs(infox):
         log.info('Enqueue {jd_id} to redis'.format(jd_id=job_details_id))
 
         publish_to_fedmsg(topic='image.queued',
-                          compose_url=info['path'],
+                          compose_url=info['absolute_path'],
                           compose_id=info['compose']['id'],
                           image_name=image_name,
                           status='queued',
