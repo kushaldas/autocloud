@@ -21,7 +21,14 @@ def upgrade():
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('date', sa.DateTime(), nullable=False),
         sa.Column('compose_id', sa.String(length=255), nullable=False),
+        sa.Column('respin', sa.String(length=255), nullable=False),
         sa.Column('type', sa.String(length=255), nullable=False),
+        sa.Column('passed', sa.Integer(), nullable=True, default=0),
+        sa.Column('failed', sa.Integer(), nullable=True, default=0),
+        sa.Column('status', sa.String(length=255), nullable=True)
+        sa.Column('created_on', sa.DateTime(), nullable=False),
+        sa.Column('last_updated', sa.DateTime(), nullable=False),
+        sa.Column('location', sa.String(length=255), nullable=False),
         sa.PrimaryKeyConstraint('id')
     )
     op.create_table(
