@@ -29,6 +29,7 @@ def produce_jobs(infox):
     session = init_model()
     timestamp = datetime.datetime.now()
     for info in infox:
+        image_name = info['path'].split('.x86_64')[0]
         jd = ComposeJobDetails(
             arch=info['arch'],
             compose_id=info['compose']['id'],
@@ -42,6 +43,7 @@ def produce_jobs(infox):
             user='admin',
             image_format=info['format'],
             image_type=info['type'],
+            image_name=image_name,
         )
         session.add(jd)
         session.commit()
@@ -57,6 +59,7 @@ def produce_jobs(infox):
         publish_to_fedmsg(topic='image.queued',
                           compose_url=info['path'],
                           compose_id=info['compose']['id'],
+                          image_name=image_name,
                           status='queued',
                           job_id=info['job_id'],
                           release=info['compose']['release'],
