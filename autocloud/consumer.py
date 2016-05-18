@@ -6,6 +6,8 @@ import requests
 import fedmsg.consumers
 import fedfind.release
 
+from sqlalchemy import exc
+
 import autocloud
 
 from autocloud.models import init_model, ComposeDetails
@@ -116,13 +118,14 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                     })
                     publish_to_fedmsg(topic='compose.queued', **compose_details)
 
-                except:
+                except exc.IntegrityError:
+                    session.rollback()
                     cd = session.query(ComposeDetails).filter_by(
                         compose_id=compose_details['id']).first()
                     log.info('Compose already exists %s: %s' % (
                         compose_details['id'],
                         cd.id
-                    )
+                    ))
 
             num_images = len(images)
             for pos, image in enumerate(images):
