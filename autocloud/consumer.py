@@ -97,23 +97,32 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 session = init_model()
                 compose_date = datetime.strptime(compose_details['date'],
                                                             '%Y%m%d')
-                cd = ComposeDetails(
-                    date=compose_date,
-                    compose_id=compose_details['id'],
-                    respin=compose_details['respin'],
-                    type=compose_details['type'],
-                    status=u'q',
-                    location=location,
-                )
+                try:
+                    cd = ComposeDetails(
+                        date=compose_date,
+                        compose_id=compose_details['id'],
+                        respin=compose_details['respin'],
+                        type=compose_details['type'],
+                        status=u'q',
+                        location=location,
+                    )
 
-                session.add(cd)
-                session.commit()
+                    session.add(cd)
+                    session.commit()
 
-                compose_details.update({
-                    'status': 'queued',
-                    'compose_job_id': cd.id,
-                })
-                publish_to_fedmsg(topic='compose.queued', **compose_details)
+                    compose_details.update({
+                        'status': 'queued',
+                        'compose_job_id': cd.id,
+                    })
+                    publish_to_fedmsg(topic='compose.queued', **compose_details)
+
+                except:
+                    cd = session.query(ComposeDetails).filter_by(
+                        compose_id=compose_details['id']).first()
+                    log.info('Compose already exists %s: %s' % (
+                        compose_details['id'],
+                        cd.id
+                    )
 
             num_images = len(images)
             for pos, image in enumerate(images):

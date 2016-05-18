@@ -60,7 +60,7 @@ class ComposeDetails(Base):
     )
     id = Column(Integer, primary_key=True)
     date = Column(DateTime, nullable=False)
-    compose_id = Column(String(255), nullable=False)
+    compose_id = Column(String(255), nullable=False, unique=True)
     respin = Column(Integer, nullable=False)
     type = Column(String(255), nullable=False)
     passed = Column(Integer, nullable=True, default=0)
