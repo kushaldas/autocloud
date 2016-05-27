@@ -29,3 +29,9 @@ Run this command in a seperate terminal
 ```
 python publish/publish_messages.py
 ```
+
+### Applying the migrations
+
+```
+alembic upgrade head
+```
