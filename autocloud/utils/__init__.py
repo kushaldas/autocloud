@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import fedfind.release
-
 from retask.task import Task
 from retask.queue import Queue
 
@@ -82,7 +80,8 @@ def is_valid_image(image_url):
 def get_image_name(image_name):
     if 'vagrant' in image_name.lower():
         if autocloud.VIRTUALBOX:
-            image_name = '{image_name}-Virtualbox'.format(image_name=image_name)
+            image_name = '{image_name}-Virtualbox'.format(
+                image_name=image_name)
         else:
             image_name = '{image_name}-Libvirt'.format(image_name=image_name)
     return image_name

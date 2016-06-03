@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-import koji
 import requests
 import fedmsg.consumers
 import fedfind.release
@@ -12,7 +11,7 @@ import autocloud
 
 from autocloud.models import init_model, ComposeDetails
 from autocloud.producer import publish_to_fedmsg
-from autocloud.utils import is_valid_image, produce_jobs, get_image_name
+from autocloud.utils import is_valid_image, produce_jobs
 
 import logging
 log = logging.getLogger("fedmsg")
@@ -21,6 +20,9 @@ DEBUG = autocloud.DEBUG
 
 
 class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
+    """
+    Fedmsg consumer for Autocloud
+    """
 
     if DEBUG:
         topic = [
@@ -41,7 +43,6 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
     def consume(self, msg):
         """ This is called when we receive a message matching the topic. """
 
-        builds = list()  # These will be the Koji build IDs to upload, if any.
         log.info('Received %r %r' % (msg['topic'], msg['body']['msg_id']))
 
         STATUS_F = ('FINISHED_INCOMPLETE', 'FINISHED',)
@@ -77,6 +78,10 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                 compose_details.update({'release': release})
 
                 for variant in VARIANTS_F:
+
+                    if variant not in compose_images:
+                        continue
+
                     for arch, payload in compose_images[variant].iteritems():
                         for item in payload:
                             relative_path = item['path']
@@ -85,7 +90,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                                 continue
 
                             absolute_path = '{}/{}'.format(location,
-                                                        relative_path)
+                                                           relative_path)
 
                             item.update({
                                 'compose': compose_details,
@@ -94,11 +99,10 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                             images.append(item)
                             compose_db_update = True
 
-
             if compose_db_update:
                 session = init_model()
                 compose_date = datetime.strptime(compose_details['date'],
-                                                            '%Y%m%d')
+                                                 '%Y%m%d')
                 try:
                     cd = ComposeDetails(
                         date=compose_date,
@@ -116,7 +120,8 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                         'status': 'queued',
                         'compose_job_id': cd.id,
                     })
-                    publish_to_fedmsg(topic='compose.queued', **compose_details)
+                    publish_to_fedmsg(topic='compose.queued',
+                                      **compose_details)
 
                 except exc.IntegrityError:
                     session.rollback()

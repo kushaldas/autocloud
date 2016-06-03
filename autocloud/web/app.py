@@ -2,8 +2,6 @@
 
 from __future__ import absolute_import
 
-import os
-
 import flask
 import flask.ext.restless
 
@@ -108,6 +106,7 @@ def compose_details():
         compose_locations=compose_locations
     )
 
+
 @app.route('/jobs/')
 @app.route('/jobs')
 @app.route('/jobs/<compose_pk>/')
@@ -167,8 +166,8 @@ def job_details(compose_pk=None):
 @app.route('/jobs/<jobid>/output')
 def job_output(jobid):
     job_detail = get_object_or_404(session,
-                            ComposeJobDetails,
-                            ComposeJobDetails.id == jobid)
+                                   ComposeJobDetails,
+                                   ComposeJobDetails.id == jobid)
 
     _id = session.query(ComposeDetails.id).filter_by(
         compose_id=job_detail.compose_id).all()[0][0]
@@ -181,6 +180,7 @@ def job_output(jobid):
     return flask.render_template(
         'job_output.html', job_detail=job_detail,
         compose_locations=compose_locations, _id=_id)
+
 
 # Custom Error pages
 @app.errorhandler(404)
