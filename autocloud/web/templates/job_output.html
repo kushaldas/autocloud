@@ -61,6 +61,21 @@
         </tr>
     </tbody>
   </table>
-  <pre>{{ job_detail.output }}</pre>
+  <div class="highlight">
+      <table class="output_table">
+          <tbody>
+              {% for line in job_output_lines %}
+              <tr>
+                  <td class="lineno">
+                      <a href="#{{loop.index}}" id="{{ loop.index }}" data-lineno="{{loop.index}}"></a>
+                  </td>
+                  <td class="lineout">
+                    <pre>{{ line }}</pre>
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
 </div>
 {% endblock %}

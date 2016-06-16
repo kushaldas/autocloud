@@ -81,7 +81,7 @@ class ComposeDetailsPagination(RangeBasedPagination):
 
 @app.route('/')
 def index():
-    return flask.render_template('index.html')
+    return flask.render_template('index.html', navbar_fixed=True)
 
 
 @app.route('/compose/')
@@ -103,7 +103,8 @@ def compose_details():
     return flask.render_template(
         'compose_details.html', compose_details=compose_details,
         prev_link=prev_link, next_link=next_link,
-        compose_locations=compose_locations
+        compose_locations=compose_locations,
+        navbar_fixed=True
     )
 
 
@@ -160,6 +161,7 @@ def job_details(compose_pk=None):
         'job_details.html', job_details=job_details, prev_link=prev_link,
         next_link=next_link, filter_fields=filter_fields,
         selected_filters=selected_filters, compose_locations=compose_locations,
+        navbar_fixed=True
     )
 
 
@@ -177,9 +179,14 @@ def job_output(jobid):
         ComposeDetails.location).filter(
             ComposeDetails.compose_id.in_(job_detail.compose_id)).all())
 
+    job_output_lines = []
+    if job_detail.output:
+        job_output_lines = job_detail.output.split('\n')
+
     return flask.render_template(
         'job_output.html', job_detail=job_detail,
-        compose_locations=compose_locations, _id=_id)
+        compose_locations=compose_locations, _id=_id,
+        job_output_lines=job_output_lines, navbar_fixed=False)
 
 
 # Custom Error pages

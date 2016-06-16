@@ -24,7 +24,7 @@
     <div id="wrap" class="container{{ ' max-width' if current == 'index' }}">
 
       <!-- Static navbar -->
-      <div class="navbar navbar-default navbar-fixed-top">
+      <div class="navbar navbar-default navbar-fixed-top {% if not navbar_fixed %}navbar-fixed-top-abs{% endif %}">
         <div class="container">
           <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse"
