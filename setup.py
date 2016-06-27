@@ -8,10 +8,10 @@ requires = [
 
 setup(
     name='autocloud',
-    version='0.4',
+    version='0.5',
     description='',
-    author='',
-    author_email='',
+    author='Kushal Das',
+    author_email='kushaldas@gmail.com',
     url='https://github.com/kushaldas/autocloud',
     install_requires=requires,
     packages=find_packages(),
