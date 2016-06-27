@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 requires = [
     'redis',
@@ -14,7 +14,7 @@ setup(
     author_email='',
     url='https://github.com/kushaldas/autocloud',
     install_requires=requires,
-    packages=['autocloud', 'autocloud.web', 'autocloud.utils'],
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
     classifiers=[

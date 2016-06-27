@@ -3,6 +3,8 @@
 ## Setup
 
 ```
+sudo dnf install fedfind
+
 pip install -r requirements.txt
 python setup.py develop
 sudo mkdir -p /etc/autocloud; sudo cp config/autocloud.cfg /etc/autocloud/autocloud.cfg
