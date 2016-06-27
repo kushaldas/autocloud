@@ -2,6 +2,8 @@ include README.md
 include fedmsg.d/autocloud.py
 include config/autocloud.cfg
 recursive-include apache *
+recursive-include alembic *
+include alembic.ini
 include LICENSE
 include autocloud_job
 include autocloud_job.py
