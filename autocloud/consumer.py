@@ -127,6 +127,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                     session.rollback()
                     cd = session.query(ComposeDetails).filter_by(
                         compose_id=compose_details['id']).first()
+
                     log.info('Compose already exists %s: %s' % (
                         compose_details['id'],
                         cd.id

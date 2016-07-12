@@ -316,13 +316,22 @@ def main():
             compose_id = compose_details['id']
             compose_obj = session.query(ComposeDetails).filter_by(
                 compose_id=compose_id).first()
-            compose_obj.status = u'r'
-            session.commit()
 
+            compose_status = compose_obj.status.code
 
-            params = copy.deepcopy(compose_details)
-            params.update({'status': 'running'})
-            publish_to_fedmsg(topic='compose.running', **params)
+            # Here the check if the compose_status has completed 'c' is for
+            # failsafe. This condition is never to be hit. This is to avoid
+            # sending message to fedmsg.
+            if compose_status in ('r', 'c'):
+                log.info("Compose %s already running. Skipping sending to \
+                fedmsg" % compose_id)
+            else:
+                compose_obj.status = u'r'
+                session.commit()
+
+                params = copy.deepcopy(compose_details)
+                params.update({'status': 'running'})
+                publish_to_fedmsg(topic='compose.running', **params)
 
         result, running_status = auto_job(task_data)
 
