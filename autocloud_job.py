@@ -283,7 +283,7 @@ def check_status_of_compose_image(compose_id):
     release = rel.release
 
     params = {
-        'compose_id': compose_obj.compose_id,
+        'id': compose_obj.compose_id,
         'respin': compose_obj.respin,
         'type': compose_obj.type,
         'date': datetime.datetime.strftime(compose_obj.date, '%Y%m%d'),
