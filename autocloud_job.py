@@ -90,11 +90,14 @@ def create_result_text(out):
     """
     :param out: Output text from the command.
     """
+    result_filename  = None
     lines = out.splitlines()
     for line in lines:
         if line.startswith('Result file at:'):
             result_filename = line.split(' ')[1]
 
+    if not result_filename: # In case no result file.
+        return "NO RESULT FILE."
     result_filename = result_filename.strip()
     if os.path.exists(result_filename):
         new_content = ''
