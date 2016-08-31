@@ -120,6 +120,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                         compose_details['id'],
                         cd.id
                     ))
+                session.close()
 
             num_images = len(images)
             for pos, image in enumerate(images):
