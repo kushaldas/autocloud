@@ -51,58 +51,48 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         images = []
         compose_db_update = False
         msg_body = msg['body']
+        status = msg_body['msg']['status']
+        compose_images_json = None
 
-        if msg_body['msg']['status'] in STATUS_F:
+        if status in STATUS_F:
             location = msg_body['msg']['location']
             json_metadata = '{}/metadata/images.json'.format(location)
-
             resp = requests.get(json_metadata)
             compose_images_json = getattr(resp, 'json', False)
 
-            if compose_images_json:
-                compose_images_json = compose_images_json()
+        if compose_images_json is not None:
+            compose_images_json = compose_images_json()
+            compose_images = compose_images_json['payload']['images']
+            compose_details = compose_images_json['payload']['compose']
+            compose_images = dict((variant, compose_images[variant])
+                                  for variant in VARIANTS_F
+                                  if variant in compose_images)
+            compose_id = compose_details['id']
+            rel = fedfind.release.get_release(cid=compose_id)
+            release = rel.release
+            compose_details.update({'release': release})
 
-                compose_images = compose_images_json['payload']['images']
-                compose_details = compose_images_json['payload']['compose']
+            compose_images_variants = [variant for variant in VARIANTS_F
+                                       if variant in compose_images]
 
-                compose_images = dict(
-                    (variant, compose_images[variant])
-                    for variant in VARIANTS_F
-                    if variant in compose_images
-                )
-
-                compose_id = compose_details['id']
-                rel = fedfind.release.get_release(cid=compose_id)
-                release = rel.release
-
-                compose_details.update({'release': release})
-
-                for variant in VARIANTS_F:
-
-                    if variant not in compose_images:
-                        continue
-
-                    for arch, payload in compose_images[variant].iteritems():
-                        for item in payload:
-                            relative_path = item['path']
-
-                            if not is_valid_image(relative_path):
-                                continue
-
-                            absolute_path = '{}/{}'.format(location,
-                                                           relative_path)
-
-                            item.update({
-                                'compose': compose_details,
-                                'absolute_path': absolute_path,
-                            })
-                            images.append(item)
-                            compose_db_update = True
+            for variant in compose_images_variants:
+                compose_image = compose_images[variant]
+                for arch, payload in compose_image.iteritems():
+                    for item in payload:
+                        relative_path = item['path']
+                        if not is_valid_image(relative_path):
+                            continue
+                        absolute_path = '{}/{}'.format(location, relative_path)
+                        item.update({
+                            'compose': compose_details,
+                            'absolute_path': absolute_path,
+                        })
+                        images.append(item)
+                        compose_db_update = True
 
             if compose_db_update:
                 session = init_model()
-                compose_date = datetime.strptime(compose_details['date'],
-                                                 '%Y%m%d')
+                compose_date = datetime.strptime(compose_details['date'], '%Y%m%d')
                 try:
                     cd = ComposeDetails(
                         date=compose_date,
@@ -122,12 +112,10 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
                     })
                     publish_to_fedmsg(topic='compose.queued',
                                       **compose_details)
-
                 except exc.IntegrityError:
                     session.rollback()
                     cd = session.query(ComposeDetails).filter_by(
                         compose_id=compose_details['id']).first()
-
                     log.info('Compose already exists %s: %s' % (
                         compose_details['id'],
                         cd.id
