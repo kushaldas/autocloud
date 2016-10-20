@@ -21,9 +21,6 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
-tree = lambda: defaultdict(tree)
-results = tree()
-
 def handle_err(session, data, out, err):
     """
     Prints the details and exits.
@@ -177,7 +174,8 @@ def auto_job(task_data):
 
         params.update({'status': FAILED})
         publish_to_fedmsg(topic='image.failed', **params)
-        return FAILED, check_status_of_compose_image(compose_id)
+        check_status_of_compose_image(compose_id)
+        return FAILED
 
     # Step 2: Create the conf file with correct image path.
     if basename.find('vagrant') == -1:
@@ -218,7 +216,8 @@ def auto_job(task_data):
         log.debug("Return code: %d" % ret_code)
         params.update({'status': FAILED})
         publish_to_fedmsg(topic='image.failed', **params)
-        return FAILED, check_status_of_compose_image(compose_id)
+        check_status_of_compose_image(compose_id)
+        return FAILED
     else:
         image_cleanup(image_path)
 
@@ -237,7 +236,8 @@ def auto_job(task_data):
 
     params.update({'status': SUCCESS})
     publish_to_fedmsg(topic='image.success', **params)
-    return SUCCESS, check_status_of_compose_image(compose_id)
+    check_status_of_compose_image(compose_id)
+    return SUCCESS
 
 
 def check_status_of_compose_image(compose_id):
@@ -247,33 +247,39 @@ def check_status_of_compose_image(compose_id):
     compose_obj = session.query(ComposeDetails).filter_by(
         compose_id=compose_id).first()
 
-    is_running = False
+    results = {
+        SUCCESS: 0,
+        FAILED: 0,
+        'artifacts': {}
+    }
 
     for compose_job_obj in compose_job_objs:
         status = compose_job_obj.status.code
         if status in ('r', 'q'):
-            is_running = True
-            break
+            # Abort, since there's still jobs not finished
+            return False
 
-    if is_running:
-        return False
+        elif status in ('s',):
+            results[SUCCESS] = results[SUCCESS] + 1
 
-    for compose_job_obj in compose_job_objs:
-        status = compose_job_obj.status.code
-
-        if status in ('s',):
-            results[compose_id][SUCCESS] = results[compose_id].get(SUCCESS, 0) + 1
         elif status in ('f', 'a'):
-            results[compose_id][FAILED] = results[compose_id].get(FAILED, 0) + 1
+            results[FAILED] = results[FAILED] + 1
 
-    if isinstance(results[compose_id][SUCCESS], defaultdict):
-        results[compose_id][SUCCESS] = 0
+        artifact = {
+            'architecture': compose_job_obj.arch.value,
+            'family': compose_job_obj.family.value,
+            'image_url': compose_job_obj.image_url,
+            'release': compose_job_obj.release,
+            'subvariant': compose_job_obj.subvariant,
+            'format': compose_job_obj.image_format,
+            'type': compose_job_obj.image_type,
+            'name': compose_job_obj.image_name,
+            'status': compose_job_obj.status.value
+        }
+        results['artifacts'][str(compose_job_obj.id)] = artifact
 
-    if isinstance(results[compose_id][FAILED], defaultdict):
-        results[compose_id][FAILED] = 0
-
-    compose_obj.passed = results[compose_id][SUCCESS]
-    compose_obj.failed = results[compose_id][FAILED]
+    compose_obj.passed = results[SUCCESS]
+    compose_obj.failed = results[FAILED]
     compose_obj.status = u'c'
 
     session.commit()
@@ -287,14 +293,13 @@ def check_status_of_compose_image(compose_id):
         'respin': compose_obj.respin,
         'type': compose_obj.type,
         'date': datetime.datetime.strftime(compose_obj.date, '%Y%m%d'),
-        'results': results[compose_id],
+        'results': results,
         'release': release,
         'status': 'completed',
         'compose_job_id': compose_obj.id
     }
 
     publish_to_fedmsg(topic='compose.complete', **params)
-    results.pop(compose_id, {})
 
     return True
 
@@ -333,7 +338,7 @@ def main():
                 params.update({'status': 'running'})
                 publish_to_fedmsg(topic='compose.running', **params)
 
-        result, running_status = auto_job(task_data)
+        result = auto_job(task_data)
 
 
 
