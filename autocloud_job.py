@@ -4,15 +4,12 @@ import datetime
 import json
 import os
 import subprocess
-import sys
-
-from collections import defaultdict
 
 import fedfind.release
 
 from retask.queue import Queue
 
-from autocloud.constants import SUCCESS, FAILED, ABORTED, RUNNING
+from autocloud.constants import SUCCESS, FAILED, RUNNING
 from autocloud.models import init_model, ComposeJobDetails, ComposeDetails
 from autocloud.producer import publish_to_fedmsg
 
@@ -20,6 +17,7 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger(__name__)
+
 
 def handle_err(session, data, out, err):
     """
@@ -45,7 +43,8 @@ def system(cmd):
     :return:  Tuple with (output, err, returncode).
     """
     ret = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.PIPE, close_fds=True)
     out, err = ret.communicate()
     returncode = ret.returncode
     return out, err, returncode
@@ -103,7 +102,7 @@ def create_result_text(out):
             new_content = fobj.read()
         job_status_index = out.find('Job status:')
         if job_status_index == -1:
-            return out # No job status in the output.
+            return out  # No job status in the output.
         new_line_index = out[job_status_index:].find('\n')
         out = out[:job_status_index + new_line_index]
         out = out + '\n\n' + new_content
@@ -186,7 +185,7 @@ def auto_job(task_data):
                 "type": "vm",
                 "user": "fedora"}
 
-    else: # We now have a Vagrant job.
+    else:  # We now have a Vagrant job.
         conf = {
             "name": "fedora",
             "type": "vagrant",
@@ -199,13 +198,14 @@ def auto_job(task_data):
             conf['provider'] = 'virtualbox'
         job_type = 'vagrant'
 
-        #Now let us refresh the storage pool
+        # Now let us refresh the storage pool
         refresh_storage_pool()
 
     with open('/var/run/autocloud/fedora.json', 'w') as fobj:
         fobj.write(json.dumps(conf))
 
-    system('/usr/bin/cp -f /etc/autocloud/fedora.txt /var/run/autocloud/fedora.txt')
+    system('/usr/bin/cp -f /etc/autocloud/fedora.txt '
+           '/var/run/autocloud/fedora.txt')
 
     cmd = 'tunir --job fedora --config-dir /var/run/autocloud/'
     # Now run tunir
@@ -339,7 +339,6 @@ def main():
                 publish_to_fedmsg(topic='compose.running', **params)
 
         result = auto_job(task_data)
-
 
 
 if __name__ == '__main__':
