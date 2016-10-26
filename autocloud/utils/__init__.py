@@ -64,6 +64,8 @@ def produce_jobs(infox):
                           family=jd.family.value,
                           type=info['type'])
 
+        session.close()
+
 
 def is_valid_image(image_url):
     if autocloud.VIRTUALBOX:

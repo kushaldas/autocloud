@@ -233,6 +233,7 @@ def auto_job(task_data):
     data.last_updated = timestamp
     data.output = com_text
     session.commit()
+    session.close()
 
     params.update({'status': SUCCESS})
     publish_to_fedmsg(topic='image.success', **params)
@@ -301,6 +302,8 @@ def check_status_of_compose_image(compose_id):
 
     publish_to_fedmsg(topic='compose.complete', **params)
 
+    session.close()
+
     return True
 
 
@@ -318,6 +321,7 @@ def main():
 
         if pos == 1:
             session = init_model()
+
             compose_id = compose_details['id']
             compose_obj = session.query(ComposeDetails).filter_by(
                 compose_id=compose_id).first()
@@ -337,6 +341,8 @@ def main():
                 params = copy.deepcopy(compose_details)
                 params.update({'status': 'running'})
                 publish_to_fedmsg(topic='compose.running', **params)
+
+            session.close()
 
         result = auto_job(task_data)
 
