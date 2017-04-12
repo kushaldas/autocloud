@@ -18,8 +18,10 @@
 #
 from datetime import datetime
 
+from retask.queue import Queue
 
-from autocloud.constants import FAILED, PASSED
+from autocloud.constants import FAILED, SUCCESS
+from autocloud.models import init_model, AMIComposeDetails
 from autocloud.producer import publish_to_fedmsg
 from autocloud.workers.base import AutoCloudBaseWorker
 
@@ -33,6 +35,12 @@ class AMIWorker(AutoCloudBaseWorker):
     """
     Documentation for AMI Worker
     """
+    def __enter__(self):
+        self.session = init_model()
+
+    def __exit__(self, exc, exc_value, traceback):
+        self.session.close()
+
     def consume(self, msg):
         """
         Consume the messages from ami-jobqueue in Redis and process them.
@@ -40,13 +48,25 @@ class AMIWorker(AutoCloudBaseWorker):
         ami_id = msg['ami_id']
         region = msg['region']
         compose_id = msg['compose_id']
+        job_id = msg['job_id']
 
+        try:
+            self.data = self.session.query(AMIComposeDetails).get(str(job_id))
+            self.data.status = u'r'
+            self.data.last_updated = datetime.now()
+        except Exception as err:
+            log.error("%s" % err)
+            log.error("%s: %s", compose_id)
+
+        """
         cmd = "gotun --ami-id {ami_id} --region {region} --job fedora"\
               "--config /etc/autocloud/config.yaml".format(
                 ami_id=ami_id,
                 region=region)
 
         out, err, ret_code = self.system(cmd)
+        """
+        out, err, ret_code = "", 0, 0
 
         if ret_code:
             self.handle_err(out, err)
@@ -58,11 +78,16 @@ class AMIWorker(AutoCloudBaseWorker):
                 'status': FAILED,
             })
         else:
+            self.data.status = u'p'
+            self.data.output = ''
+            self.data.last_updated = datetime.now()
+            self.session.commit()
+
             publish_to_fedmsg(topic="ami.test.passed", **{
                 'compose_id': compose_id,
                 'ami_id': ami_id,
                 'region': region,
-                'status': PASSED,
+                'status': SUCCESS,
             })
 
     def handle_err(self, out, err):
@@ -75,3 +100,19 @@ class AMIWorker(AutoCloudBaseWorker):
         self.data.last_updated = timestamp
         self.session.commit()
         log.debug("%s: %s", out, err)
+
+
+def main():
+    jobqueue = Queue('ami-jobqueue')
+    jobqueue.connect()
+
+    while True:
+        task = jobqueue.wait()
+        task_data = task.data
+
+        with AMIWorker() as worker:
+            worker.consume(task_data)
+
+
+if __name__ == '__main__':
+    main()

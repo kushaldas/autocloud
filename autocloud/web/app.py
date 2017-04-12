@@ -109,7 +109,6 @@ class AMIJobDetailsPagination(RangeBasedPagination):
                     ComposeDetails.id < from_jobdetails.id)
 
 
-
 @app.route('/')
 def index():
     return flask.render_template('index.html', navbar_fixed=True)

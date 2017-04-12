@@ -20,26 +20,27 @@
 from abc import ABCMeta, abstractmethod
 
 import six
+import subprocess
 
-@six.add_metaclass(abc.ABCMeta)
-class AutocloudBaseWorker():
+@six.add_metaclass(ABCMeta)
+class AutoCloudBaseWorker():
 
     def system(self, cmd):
-    """
-    Runs the shell command provided to the method.
+        """
+        Runs the shell command provided to the method.
 
-    Args:
-        cmd (str): The command to execute.
+        Args:
+            cmd (str): The command to execute.
 
-    Returns:
-        output, err, returncode (tuple): Retuns a tuple containing the output,
-        error, returncode
-    """
-    ret = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-    out, err = ret.communicate()
-    returncode = ret.returncode
-    return out, err, returncode
+        Returns:
+            output, err, returncode (tuple): Retuns a tuple containing the output,
+            error, returncode
+        """
+        ret = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+        out, err = ret.communicate()
+        returncode = ret.returncode
+        return out, err, returncode
 
 
     @abstractmethod
@@ -48,4 +49,5 @@ class AutocloudBaseWorker():
 
     @abstractmethod
     def consume():
+        pass
 
