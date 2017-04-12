@@ -49,7 +49,7 @@ class AMIWorker(AutoCloudBaseWorker):
         ami_id = msg['ami_id']
         region = msg['region']
         compose_id = msg['compose_id']
-        job_id = msg['job_id']
+        job_id = msg['ami_jd_id']
 
         try:
             self.data = self.session.query(AMIJobDetails).get(str(job_id))

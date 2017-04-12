@@ -12,7 +12,7 @@ import logging
 log = logging.getLogger("fedmsg")
 
 
-def produce_fedimg_jobs(infox):
+def produce_ami_jobs(infox):
     """ Queue the jobs into the fedimg job queue
     :args infox: dictionary contains the ami id, region to test
     """
@@ -53,6 +53,8 @@ def produce_fedimg_jobs(infox):
         job_id=infox['ami_jd_id'],
         release=infox['release'],
     )
+
+    session.close()
 
 
 def produce_jobs(infox):
