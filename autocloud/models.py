@@ -106,6 +106,26 @@ class ComposeJobDetails(Base):
     image_name = Column(String(255), nullable=False)
 
 
+class AMIJobDetails(Base):
+    __tablename__ = 'compose_ami_job_details'
+
+    STATUS_TYPES = (
+        ('s', 'Success'),
+        ('f', 'Failed'),
+        ('r', 'Running'),
+        ('q', 'Queued'),
+    )
+
+    id = Column(Integer, primary_key=True)
+    compose_id = Column(String(255), nullable=False)
+    created_on = Column(DateTime, default=datetime.datetime.utcnow)
+    ami_id = Column(String(255), nullable=False)
+    region = Column(String(255), nullable=False)
+    release = Column(String(255))
+    virt_type = Column(String(255), nullable=False)
+    status = Column(ChoiceType(STATUS_TYPES))
+
+
 def create_tables():
     # Create an engine that stores data in the local directory
     engine = create_engine(autocloud.SQLALCHEMY_URI)

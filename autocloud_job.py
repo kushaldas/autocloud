@@ -4,7 +4,6 @@ import datetime
 import json
 import os
 import subprocess
-import sys
 
 from collections import defaultdict
 
@@ -12,7 +11,7 @@ import fedfind.release
 
 from retask.queue import Queue
 
-from autocloud.constants import SUCCESS, FAILED, ABORTED, RUNNING
+from autocloud.constants import SUCCESS, FAILED, RUNNING
 from autocloud.models import init_model, ComposeJobDetails, ComposeDetails
 from autocloud.producer import publish_to_fedmsg
 
@@ -23,6 +22,7 @@ log = logging.getLogger(__name__)
 
 tree = lambda: defaultdict(tree)
 results = tree()
+
 
 def handle_err(session, data, out, err):
     """

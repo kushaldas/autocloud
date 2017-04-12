@@ -3,13 +3,56 @@ from retask.task import Task
 from retask.queue import Queue
 
 import autocloud
-from autocloud.models import init_model, ComposeJobDetails
+from autocloud.models import init_model, ComposeJobDetails, AMIJobDetails
 from autocloud.producer import publish_to_fedmsg
 
 import datetime
 
 import logging
 log = logging.getLogger("fedmsg")
+
+
+def produce_fedimg_jobs(infox):
+    """ Queue the jobs into the fedimg job queue
+    :args infox: dictionary contains the ami id, region to test
+    """
+
+    jobqueue = Queue('ami-jobqueue')
+    jobqueue.connect()
+
+    session = init_model()
+    timestamp = datetime.datetime.now()
+
+    infox.update({
+        'created_on': timestamp,
+    })
+    ami_jd = AMIJobDetails(**infox)
+
+    session.add(ami_jd)
+    session.commit()
+
+    ami_job_details_id = ami_jd.id
+    log.info(
+        'Save {ami_jd_id} to database'.format(
+            ami_jd_id=ami_job_details_id
+        )
+    )
+    infox.update({
+        'ami_jd_id': ami_jd.id,
+        'created_on': str(timestamp),
+    })
+    task = Task(infox)
+    jobqueue.enqueue(task)
+    log.info('Enqueue {ami_jd_id} to redis'.format(
+        ami_jd_id=ami_job_details_id))
+
+    publish_to_fedmsg(
+        topic='ami.queued',
+        compose_id=infox['compose_id'],
+        status='queued',
+        job_id=infox['ami_jd_id'],
+        release=infox['release'],
+    )
 
 
 def produce_jobs(infox):

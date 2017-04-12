@@ -11,7 +11,7 @@ import autocloud
 
 from autocloud.models import init_model, ComposeDetails
 from autocloud.producer import publish_to_fedmsg
-from autocloud.utils import is_valid_image, produce_jobs
+from autocloud.utils import is_valid_image, produce_jobs, produce_fedimg_jobs
 
 import logging
 log = logging.getLogger("fedmsg")
@@ -26,12 +26,14 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
     if DEBUG:
         topic = [
-            'org.fedoraproject.dev.__main__.pungi.compose.status.change'
+            'org.fedoraproject.dev.pungi.compose.status.change',
+            'org.fedoraproject.dev.fedimg.image.create'
         ]
 
     else:
         topic = [
-            'org.fedoraproject.prod.pungi.compose.status.change'
+            'org.fedoraproject.prod.pungi.compose.status.change',
+            'org.fedoraproject.prod.fedimg.image.create'
         ]
 
     config_key = 'autocloud.consumer.enabled'
@@ -42,8 +44,40 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
 
     def consume(self, msg):
         """ This is called when we receive a message matching the topic. """
-
         log.info('Received %r %r' % (msg['topic'], msg['body']['msg_id']))
+
+        topic = msg['topic']
+
+        if topic.endswith('pungi.compose.status.change'):
+            self._handle_compose_messages(msg)
+        elif topic.endswith('fedimg.image.create'):
+            self._handle_fedimg_messages(msg)
+
+    def _handle_fedimg_messages(self, msg):
+        """ This method is called to handle the fedimg messages. """
+
+        msg_body = msg['body']['msg']
+        msg_extra = msg_body['extra']
+
+        compose_id = msg_body['compose']['compose_id']
+        rel = fedfind.release.get_release(cid=compose_id)
+        release = rel.release
+
+        region = msg_extra['region']
+        ami_id = msg_extra['id']
+        virt_type = msg_extra['virt_type']
+
+        infox = {
+            'region': region,
+            'ami_id': ami_id,
+            'compose_id': compose_id,
+            'virt_type': virt_type,
+            'release': release,
+        }
+        produce_fedimg_jobs(infox)
+
+    def _handle_compose_messages(self, msg):
+        """ This method is called to handle the compose messages. """
 
         STATUS_F = ('FINISHED_INCOMPLETE', 'FINISHED',)
         VARIANTS_F = ('CloudImages',)

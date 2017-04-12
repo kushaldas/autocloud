@@ -1,0 +1,71 @@
+{% extends "master.html" %}
+
+{% block body %}
+<div class="container">
+  <nav>
+    <ul class="pager">
+      <li class="previous{% if not prev_link %} disabled{% endif %}">
+        {% if prev_link %}
+          <a href="{{ prev_link }}"><span aria-hidden="true">&larr;</span> Previous</a>
+        {% endif %}
+      </li>
+      <li class="next{% if not next_link %} disabled{% endif %}">
+        {% if next_link %}
+          <a href="{{ next_link }}">Next <span aria-hidden="true">&rarr;</span></a>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Compose ID</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Respin</th>
+        <th>Overview</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for compose_detail in compose_details %}
+        <tr>
+          <td>
+              <a href="{{ compose_locations[compose_detail.compose_id] }}" target="_blank">{{ compose_detail.compose_id }}</a>
+          </td>
+          <td>
+              {% if compose_detail.status == 'c' %}
+                <span class="label label-success glyphicon glyphicon-ok">
+              {% elif compose_detail.status == 'r' %}
+                <span class="label label-primary glyphicon glyphicon-refresh">
+              {% elif compose_detail.status == 'q' %}
+                <span class="label label-info glyphicon glyphicon-time">
+              {% else %}
+                <span class="label label-default">
+              {% endif %}
+                  {{ compose_detail.status }}
+              </span>
+          </td>
+          <td>
+            {{ compose_detail.date.strftime('%Y-%m-%d') }}
+          </td>
+          <td>
+            {{ compose_detail.type }}
+          </td>
+          <td>
+            {{ compose_detail.respin }}
+          </td>
+          <td>
+            <i class="label label-success glyphicon glyphicon-ok i-b"></i> {{ compose_detail.passed }} / 
+            <i class="label label-danger glyphicon glyphicon-remove i-b"></i> {{ compose_detail.failed }}
+          </td>
+          <td><a class="btn btn-primary btn-sm" href="{{ url_for('ami_job_details', compose_pk=compose_detail.id) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Results</a></td>
+        </tr>
+      {% else %}
+        <tr><td>No results to display!</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
