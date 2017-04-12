@@ -21,7 +21,7 @@ from datetime import datetime
 from retask.queue import Queue
 
 from autocloud.constants import FAILED, SUCCESS
-from autocloud.models import init_model, AMIComposeDetails
+from autocloud.models import init_model, AMIJobDetails
 from autocloud.producer import publish_to_fedmsg
 from autocloud.workers.base import AutoCloudBaseWorker
 
@@ -35,8 +35,9 @@ class AMIWorker(AutoCloudBaseWorker):
     """
     Documentation for AMI Worker
     """
-    def __enter__(self):
+    def __enter__(self, *args, **kwargs):
         self.session = init_model()
+        return self
 
     def __exit__(self, exc, exc_value, traceback):
         self.session.close()
@@ -51,7 +52,7 @@ class AMIWorker(AutoCloudBaseWorker):
         job_id = msg['job_id']
 
         try:
-            self.data = self.session.query(AMIComposeDetails).get(str(job_id))
+            self.data = self.session.query(AMIJobDetails).get(str(job_id))
             self.data.status = u'r'
             self.data.last_updated = datetime.now()
         except Exception as err:
