@@ -9,9 +9,9 @@ from sqlalchemy import exc
 
 import autocloud
 
-from autocloud.models import init_model, ComposeDetails
+from autocloud.models import init_model, ComposeDetails, AMIComposeDetails
 from autocloud.producer import publish_to_fedmsg
-from autocloud.utils import is_valid_image, produce_jobs, produce_fedimg_jobs
+from autocloud.utils import is_valid_image, produce_jobs, produce_ami_jobs
 
 import logging
 log = logging.getLogger("fedmsg")
@@ -63,6 +63,22 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         rel = fedfind.release.get_release(cid=compose_id)
         release = rel.release
 
+        session = init_model()
+        compose_date = datetime.strptime(rel.compose,
+                                         '%Y%m%d')
+
+        cd = AMIComposeDetails(
+            date=compose_date,
+            compose_id=compose_id,
+            respin=rel.respin,
+            type=rel.type,
+            status=u'q',
+            location=rel.location,
+        )
+        session.add(cd)
+        session.commit()
+        session.close()
+
         region = msg_extra['region']
         ami_id = msg_extra['id']
         virt_type = msg_extra['virt_type']
@@ -74,7 +90,7 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
             'virt_type': virt_type,
             'release': release,
         }
-        produce_fedimg_jobs(infox)
+        produce_ami_jobs(infox)
 
     def _handle_compose_messages(self, msg):
         """ This method is called to handle the compose messages. """

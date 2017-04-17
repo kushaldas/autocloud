@@ -2,7 +2,7 @@
 
 import datetime
 
-from sqlalchemy import Column, Integer, String, DateTime, Text
+from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -104,6 +104,27 @@ class ComposeJobDetails(Base):
     image_format = Column(String(255), nullable=False)
     image_type = Column(String(255), nullable=False)
     image_name = Column(String(255), nullable=False)
+
+
+class AMIComposeDetails(Base):
+    __tablename__ = 'ami_compose_details'
+
+    STATUS_TYPES = (
+        ('c', 'Complete'),
+        ('q', 'Queued'),
+        ('r', 'Running'),
+    )
+    id = Column(Integer, primary_key=True)
+    date = Column(DateTime, nullable=False)
+    compose_id = Column(String(255), nullable=False, unique=True)
+    respin = Column(Integer, nullable=False)
+    type = Column(String(255), nullable=False)
+    passed = Column(Integer, nullable=True, default=0)
+    failed = Column(Integer, nullable=True, default=0)
+    status = Column(ChoiceType(STATUS_TYPES))
+    created_on = Column(DateTime, default=datetime.datetime.utcnow)
+    last_updated = Column(DateTime, default=datetime.datetime.utcnow)
+    location = Column(String(255), nullable=False)
 
 
 class AMIJobDetails(Base):

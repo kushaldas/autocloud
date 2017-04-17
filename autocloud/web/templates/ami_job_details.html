@@ -1,0 +1,99 @@
+{% extends "master.html" %}
+
+{% block body %}
+<div class="container">
+  <nav>
+    <ul class="pager">
+      <li class="previous{% if not prev_link %} disabled{% endif %}">
+        {% if prev_link %}
+          <a href="{{ prev_link }}"><span aria-hidden="true">&larr;</span> Previous</a>
+        {% endif %}
+      </li>
+      <li class="next{% if not next_link %} disabled{% endif %}">
+        {% if next_link %}
+          <a href="{{ next_link }}">Next <span aria-hidden="true">&rarr;</span></a>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
+  <nav class="navbar navbar-default">
+      <form id="filter" class="navbar-form navbar-right" role="search">
+          {% for field in filter_fields %}
+              <div class="form-group">
+                  <label>{{ field.label }}</label>
+                  <select class="form-control" name="{{ field.name }}">
+                      <option value="">All</option>
+                      {% for option in field.options %}
+                      <option value="{{ option[0] }}"
+                        {% if option[0] == selected_filters[field['name']] %}
+                            selected="selected"
+                        {% endif %}
+                      >{{ option[1] }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-filter"></span>
+          </button>
+      </form>
+  </nav>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Compose ID</th>
+        <th>Family</th>
+        <th>AMI ID</th>
+        <th>Architecture</th>
+        <th>Release</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Last updated</th>
+        <th>Output</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for job_detail in job_details %}
+        <tr>
+          <td>
+              <a href="{{ compose_locations[job_detail.compose_id] }}" target="_blank">{{ job_detail.compose_id }}</a>
+          </td>
+          <td>
+            {{ job_detail.family }}
+          </td>
+          <td>
+            {{ job_detail.arch }}
+          </td>
+          <td>
+            {{ job_detail.release }}
+          </td>
+          <td>
+            {{ job_detail.image_type }}
+          </td>
+          <td>
+              {% if job_detail.status == 's' %}
+                <span class="label label-success glyphicon glyphicon-ok">
+              {% elif job_detail.status in ('f', 'a') %}
+                <span class="label label-danger glyphicon glyphicon-remove">
+              {% elif job_detail.status == 'r' %}
+                <span class="label label-primary glyphicon glyphicon-refresh">
+              {% elif job_detail.status == 'q' %}
+                <span class="label label-info glyphicon glyphicon-time">
+              {% else %}
+                <span class="label label-default">
+              {% endif %}
+                  {{ job_detail.status }}
+              </span>
+          </td>
+          <td>{{ job_detail.created_on.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td>{{ job_detail.last_updated.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td><a class="btn btn-primary btn-sm" href="{{ url_for('job_output', jobid=job_detail.id) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Output</a></td>
+        </tr>
+      {% else %}
+        <tr><td>No results to display!</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -13,7 +13,7 @@ import autocloud
 
 from autocloud.models import init_model
 from autocloud.models import JobDetails, ComposeJobDetails, ComposeDetails
-from autocloud.models import AMIJobDetails
+from autocloud.models import AMIComposeDetails, AMIJobDetails
 from autocloud.web.pagination import RangeBasedPagination
 from autocloud.web.utils import get_object_or_404
 
@@ -80,6 +80,35 @@ class ComposeDetailsPagination(RangeBasedPagination):
                     ComposeDetails.id < from_jobdetails.id)
 
 
+class AMIComposeDetailsPagination(RangeBasedPagination):
+    def get_page_link(self, page_key, limit):
+        get_params = dict(request.args)
+        get_params.update({
+            'from': page_key, 'limit': limit})
+        return url_for('compose_details', **dict(
+            [(key, value) for key, value in get_params.items()])
+        )
+
+    def order_queryset(self):
+        if self.direction == 'next':
+            self.queryset = self.queryset.order_by(desc(
+                AMIComposeDetails.id))
+        else:
+            self.queryset = self.queryset.order_by(AMIComposeDetails.id)
+
+    def filter_queryset(self):
+        if self.page_key is None:
+            return
+        from_jobdetails = session.query(AMIComposeDetails).get(self.page_key)
+        if from_jobdetails:
+            if self.direction == 'prev':
+                self.queryset = self.queryset.filter(
+                    AMIComposeDetails.id > from_jobdetails.id)
+            else:
+                self.queryset = self.queryset.filter(
+                    AMIComposeDetails.id < from_jobdetails.id)
+
+
 class AMIJobDetailsPagination(RangeBasedPagination):
     def get_page_link(self, page_key, limit):
         get_params = dict(request.args)
@@ -92,21 +121,21 @@ class AMIJobDetailsPagination(RangeBasedPagination):
     def order_queryset(self):
         if self.direction == 'next':
             self.queryset = self.queryset.order_by(desc(
-                ComposeDetails.id))
+                AMIComposeDetails.id))
         else:
-            self.queryset = self.queryset.order_by(ComposeDetails.id)
+            self.queryset = self.queryset.order_by(AMIComposeDetails.id)
 
     def filter_queryset(self):
         if self.page_key is None:
             return
-        from_jobdetails = session.query(ComposeDetails).get(self.page_key)
+        from_jobdetails = session.query(AMIComposeDetails).get(self.page_key)
         if from_jobdetails:
             if self.direction == 'prev':
                 self.queryset = self.queryset.filter(
-                    ComposeDetails.id > from_jobdetails.id)
+                    AMIComposeDetails.id > from_jobdetails.id)
             else:
                 self.queryset = self.queryset.filter(
-                    ComposeDetails.id < from_jobdetails.id)
+                    AMIComposeDetails.id < from_jobdetails.id)
 
 
 @app.route('/')
@@ -222,18 +251,18 @@ def job_output(jobid):
 @app.route('/ami/compose/')
 @app.route('/ami/compose')
 def ami_compose_details():
-    queryset = session.query(ComposeDetails)
+    queryset = session.query(AMIComposeDetails)
 
     limit = int(request.args.get('limit', 15))
-    compose_details, prev_link, next_link = ComposeDetailsPagination(
+    compose_details, prev_link, next_link = AMIComposeDetailsPagination(
         queryset, request.args.get('from'), limit, request.path,
         request.referrer, dict(request.args)).paginate()
 
     compose_ids = [item.compose_id for item in compose_details]
     compose_locations = dict(session.query(
-        ComposeDetails.compose_id,
-        ComposeDetails.location).filter(
-            ComposeDetails.compose_id.in_(compose_ids)).all())
+        AMIComposeDetails.compose_id,
+        AMIComposeDetails.location).filter(
+            AMIComposeDetails.compose_id.in_(compose_ids)).all())
 
     return flask.render_template(
         'compose_ami_details.html', compose_details=compose_details,
@@ -248,10 +277,10 @@ def ami_compose_details():
 @app.route('/ami/jobs/<compose_pk>/')
 @app.route('/ami/jobs/<compose_pk>')
 def ami_job_details(compose_pk=None):
-    queryset = session.query(ComposeJobDetails)
+    queryset = session.query(AMIJobDetails)
 
     if compose_pk is not None:
-        compose_obj = session.query(ComposeDetails).get(compose_pk)
+        compose_obj = session.query(AMIComposeDetails).get(compose_pk)
         if compose_obj is None:
             abort(404)
 
@@ -286,12 +315,12 @@ def ami_job_details(compose_pk=None):
 
     compose_ids = [item.compose_id for item in job_details]
     compose_locations = dict(session.query(
-        ComposeDetails.compose_id,
-        ComposeDetails.location).filter(
-            ComposeDetails.compose_id.in_(compose_ids)).all())
+        AMIComposeDetails.compose_id,
+        AMIComposeDetails.location).filter(
+            AMIComposeDetails.compose_id.in_(compose_ids)).all())
 
     return flask.render_template(
-        'job_details.html', job_details=job_details, prev_link=prev_link,
+        'ami_job_details.html', job_details=job_details, prev_link=prev_link,
         next_link=next_link, filter_fields=filter_fields,
         selected_filters=selected_filters, compose_locations=compose_locations,
         navbar_fixed=True

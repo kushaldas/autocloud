@@ -21,7 +21,7 @@ from datetime import datetime
 from retask.queue import Queue
 
 from autocloud.constants import FAILED, SUCCESS
-from autocloud.models import init_model, AMIJobDetails
+from autocloud.models import init_model, AMIJobDetails, AMIComposeDetails
 from autocloud.producer import publish_to_fedmsg
 from autocloud.workers.base import AutoCloudBaseWorker
 
@@ -52,9 +52,15 @@ class AMIWorker(AutoCloudBaseWorker):
         job_id = msg['ami_jd_id']
 
         try:
-            self.data = self.session.query(AMIJobDetails).get(str(job_id))
-            self.data.status = u'r'
-            self.data.last_updated = datetime.now()
+            self.ami_cd = self.session.query(AMIComposeDetails).filter_by(
+                    compose_id=compose_id).first()
+            self.ami_cd.status = 'r'
+            self.ami_cd.last_updated = datetime.now()
+
+            self.ami_jd = self.session.query(AMIJobDetails).get(str(job_id))
+            self.ami_jd.status = u'r'
+
+            self.session.commit()
         except Exception as err:
             log.error("%s" % err)
             log.error("%s: %s", compose_id)
@@ -79,9 +85,10 @@ class AMIWorker(AutoCloudBaseWorker):
                 'status': FAILED,
             })
         else:
-            self.data.status = u'p'
-            self.data.output = ''
-            self.data.last_updated = datetime.now()
+            self.ami_jd.status = u's'
+            self.ami_jd.output = ''
+            self.ami_jd.last_updated = datetime.now()
+            self.ami_cd.status = 'c'
             self.session.commit()
 
             publish_to_fedmsg(topic="ami.test.passed", **{
