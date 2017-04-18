@@ -144,6 +144,7 @@ class AMIJobDetails(Base):
     region = Column(String(255), nullable=False)
     release = Column(String(255))
     virt_type = Column(String(255), nullable=False)
+    vol_type = Column(String(255), nullable=False)
     status = Column(ChoiceType(STATUS_TYPES))
 
 

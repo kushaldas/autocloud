@@ -121,21 +121,21 @@ class AMIJobDetailsPagination(RangeBasedPagination):
     def order_queryset(self):
         if self.direction == 'next':
             self.queryset = self.queryset.order_by(desc(
-                AMIComposeDetails.id))
+                AMIJobDetails.id))
         else:
-            self.queryset = self.queryset.order_by(AMIComposeDetails.id)
+            self.queryset = self.queryset.order_by(AMIJobDetails.id)
 
     def filter_queryset(self):
         if self.page_key is None:
             return
-        from_jobdetails = session.query(AMIComposeDetails).get(self.page_key)
+        from_jobdetails = session.query(AMIJobDetails).get(self.page_key)
         if from_jobdetails:
             if self.direction == 'prev':
                 self.queryset = self.queryset.filter(
-                    AMIComposeDetails.id > from_jobdetails.id)
+                    AMIJobDetails.id > from_jobdetails.id)
             else:
                 self.queryset = self.queryset.filter(
-                    AMIComposeDetails.id < from_jobdetails.id)
+                    AMIJobDetails.id < from_jobdetails.id)
 
 
 @app.route('/')
@@ -303,14 +303,18 @@ def ami_job_details(compose_pk=None):
         request.path,
         request.referrer, dict(request.args)).paginate()
     filter_fields = (
+        {'label': 'Virtualization', 'name': 'virt_type',
+         'options': [(value[0], value[0])
+                     for value in session.query(
+                         AMIJobDetails.virt_type).distinct()]},
         {'label': 'Region', 'name': 'region',
          'options': [(value[0], value[0])
                      for value in session.query(
-                         AMIJobDetails.image_type).distinct()]},
+                         AMIJobDetails.region).distinct()]},
         {'label': 'Volume', 'name': 'vol_type',
          'options': [(value[0], value[0])
                      for value in session.query(
-                         AMIJobDetails.image_type).distinct()]},
+                         AMIJobDetails.vol_type).distinct()]},
     )
 
     compose_ids = [item.compose_id for item in job_details]
@@ -337,4 +341,7 @@ apimanager = flask.ext.restless.APIManager(app, session=session)
 apimanager.create_api(JobDetails, methods=['GET'])
 
 if __name__ == '__main__':
-    app.run(host=autocloud.HOST, port=autocloud.PORT, debug=autocloud.DEBUG)
+    from gevent.wsgi import WSGIServer
+    http_server = WSGIServer(('', 5000), app)
+    http_server.serve_forever()
+    #app.run(host=autocloud.HOST, port=autocloud.PORT, debug=autocloud.DEBUG)

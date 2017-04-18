@@ -42,14 +42,13 @@
     <thead>
       <tr>
         <th>Compose ID</th>
-        <th>Family</th>
         <th>AMI ID</th>
-        <th>Architecture</th>
+        <th>Region</th>
         <th>Release</th>
-        <th>Type</th>
+        <th>Virtualization Type</th>
+        <th>Volume Type</th>
         <th>Status</th>
         <th>Created</th>
-        <th>Last updated</th>
         <th>Output</th>
       </tr>
     </thead>
@@ -60,16 +59,19 @@
               <a href="{{ compose_locations[job_detail.compose_id] }}" target="_blank">{{ job_detail.compose_id }}</a>
           </td>
           <td>
-            {{ job_detail.family }}
+            {{ job_detail.ami_id }}
           </td>
           <td>
-            {{ job_detail.arch }}
+            {{ job_detail.region }}
           </td>
           <td>
             {{ job_detail.release }}
           </td>
           <td>
-            {{ job_detail.image_type }}
+            {{ job_detail.virt_type }}
+          </td>
+          <td>
+            {{ job_detail.vol_type }}
           </td>
           <td>
               {% if job_detail.status == 's' %}
@@ -87,7 +89,6 @@
               </span>
           </td>
           <td>{{ job_detail.created_on.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-          <td>{{ job_detail.last_updated.strftime('%Y-%m-%d %H:%M:%S') }}</td>
           <td><a class="btn btn-primary btn-sm" href="{{ url_for('job_output', jobid=job_detail.id) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Output</a></td>
         </tr>
       {% else %}

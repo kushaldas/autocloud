@@ -82,12 +82,14 @@ class AutoCloudConsumer(fedmsg.consumers.FedmsgConsumer):
         region = msg_extra['region']
         ami_id = msg_extra['id']
         virt_type = msg_extra['virt_type']
+        vol_type = msg_extra['vol_type']
 
         infox = {
             'region': region,
             'ami_id': ami_id,
             'compose_id': compose_id,
             'virt_type': virt_type,
+            'vol_type': vol_type,
             'release': release,
         }
         produce_ami_jobs(infox)
