@@ -146,6 +146,7 @@ class AMIJobDetails(Base):
     virt_type = Column(String(255), nullable=False)
     vol_type = Column(String(255), nullable=False)
     status = Column(ChoiceType(STATUS_TYPES))
+    output = Column(Text, nullable=False, default='')
 
 
 def create_tables():
