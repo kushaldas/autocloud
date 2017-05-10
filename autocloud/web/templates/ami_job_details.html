@@ -89,7 +89,7 @@
               </span>
           </td>
           <td>{{ job_detail.created_on.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-          <td><a class="btn btn-primary btn-sm" href="{{ url_for('job_output', jobid=job_detail.id) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Output</a></td>
+          <td><a class="btn btn-primary btn-sm" href="{{ url_for('ami_job_output', jobid=job_detail.id) }}"><icon class="glyphicon glyphicon-list-alt"></icon> Output</a></td>
         </tr>
       {% else %}
         <tr><td>No results to display!</td></tr>

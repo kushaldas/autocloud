@@ -331,6 +331,31 @@ def ami_job_details(compose_pk=None):
     )
 
 
+@app.route('/ami/jobs/<jobid>/output')
+def ami_job_output(jobid):
+    job_detail = get_object_or_404(session,
+                                   AMIJobDetails,
+                                   AMIJobDetails.id == jobid)
+
+    _id = session.query(AMIComposeDetails.id).filter_by(
+        compose_id=job_detail.compose_id).all()[0][0]
+
+    compose_locations = dict(session.query(
+        AMIComposeDetails.compose_id,
+        AMIComposeDetails.location).filter(
+            AMIComposeDetails.compose_id.in_(job_detail.compose_id)).all())
+
+    job_output_lines = []
+    if job_detail.output:
+        job_output_lines = job_detail.output.split('\n')
+
+    return flask.render_template(
+        'job_output.html', job_detail=job_detail,
+        compose_locations=compose_locations, _id=_id,
+        job_output_lines=job_output_lines, navbar_fixed=False)
+
+
+
 # Custom Error pages
 @app.errorhandler(404)
 def page_not_found(e):
