@@ -65,19 +65,21 @@ class AMIWorker(AutoCloudBaseWorker):
             log.error("%s" % err)
             log.error("%s: %s", compose_id)
 
-        """
         cmd = "gotun --ami-id {ami_id} --region {region} --job fedora"\
-              "--config /etc/autocloud/config.yaml".format(
+              " --config-dir /etc/gotun".format(
                 ami_id=ami_id,
                 region=region)
 
         out, err, ret_code = self.system(cmd)
-        """
-        out, err, ret_code = "", 0, 0
+
+        self.ami_jd.output = out
+        self.ami_jd.last_updated = datetime.now()
 
         if ret_code:
-            self.handle_err(out, err)
             log.debug("Return code: %d" % ret_code)
+            self.ami_jd.status = u'f'
+            self.ami_cd.status = u'c'
+            self.session.commit()
             publish_to_fedmsg(topic="ami.test.failed", **{
                 'compose_id': compose_id,
                 'ami_id': ami_id,
@@ -86,28 +88,14 @@ class AMIWorker(AutoCloudBaseWorker):
             })
         else:
             self.ami_jd.status = u's'
-            self.ami_jd.output = ''
-            self.ami_jd.last_updated = datetime.now()
             self.ami_cd.status = 'c'
             self.session.commit()
-
             publish_to_fedmsg(topic="ami.test.passed", **{
                 'compose_id': compose_id,
                 'ami_id': ami_id,
                 'region': region,
                 'status': SUCCESS,
             })
-
-    def handle_err(self, out, err):
-        """
-        Handles the error and stores the output in the database
-        """
-        self.data.status = u'f'
-        self.data.output = '%s: %s' % (out, err)
-        timestamp = datetime.now()
-        self.data.last_updated = timestamp
-        self.session.commit()
-        log.debug("%s: %s", out, err)
 
 
 def main():
