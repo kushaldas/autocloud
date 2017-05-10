@@ -147,6 +147,7 @@ class AMIJobDetails(Base):
     vol_type = Column(String(255), nullable=False)
     status = Column(ChoiceType(STATUS_TYPES))
     output = Column(Text, nullable=False, default='')
+    last_updated = Column(DateTime, default=datetime.datetime.utcnow)
 
 
 def create_tables():
