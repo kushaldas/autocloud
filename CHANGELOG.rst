@@ -1,4 +1,17 @@
 
+0.7.2
+-----
+
+Pull Requests
+
+- (@sayanchowdhury) #56, Ignore if the arch is not supported
+  https://github.com/kushaldas/autocloud/pull/56
+
+Commits
+
+- 84281ac05 Don't process arch which are not supported
+  https://github.com/kushaldas/autocloud/commit/84281ac05
+
 0.7.1
 -----
 
