@@ -1,4 +1,17 @@
 
+0.7.3
+-----
+
+Pull Requests
+
+- (@sayanchowdhury) #57, Only show the supported archs in the webapp
+  https://github.com/kushaldas/autocloud/pull/57
+
+Commits
+
+- 5e7dbbcc4 web: Exclude the archs that are not supported in the webapp too
+  https://github.com/kushaldas/autocloud/commit/5e7dbbcc4
+
 0.7.2
 -----
 
