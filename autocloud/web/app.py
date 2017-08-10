@@ -114,6 +114,7 @@ def compose_details():
 @app.route('/jobs/<compose_pk>')
 def job_details(compose_pk=None):
     queryset = session.query(ComposeJobDetails)
+    supported_archs = [arch for arch, _ in ComposeJobDetails.ARCH_TYPES]
 
     if compose_pk is not None:
         compose_obj = session.query(ComposeDetails).get(compose_pk)
@@ -122,7 +123,8 @@ def job_details(compose_pk=None):
 
         compose_id = compose_obj.compose_id
 
-        queryset = queryset.filter_by(compose_id=compose_id)
+        queryset = queryset.filter_by(compose_id=compose_id).filter(
+                ComposeJobDetails.arch.in_(supported_archs))
 
     # Apply filters
     filters = ('family', 'arch', 'status', 'image_type')
