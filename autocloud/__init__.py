@@ -7,7 +7,7 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__name__))
 
 name = '/etc/autocloud/autocloud.cfg'
 if not os.path.exists(name):
-    raise Exception('Please add a proper cofig file under /etc/autocloud/')
+    raise Exception('Please add a proper config file under /etc/autocloud/')
 
 config = ConfigParser.RawConfigParser()
 config.read(name)
