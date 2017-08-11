@@ -114,7 +114,10 @@ def compose_details():
 @app.route('/jobs/<compose_pk>')
 def job_details(compose_pk=None):
     queryset = session.query(ComposeJobDetails)
+
+    # Filter the non-supported archs
     supported_archs = [arch for arch, _ in ComposeJobDetails.ARCH_TYPES]
+    queryset = queryset.filter(ComposeJobDetails.arch.in_(supported_archs))
 
     if compose_pk is not None:
         compose_obj = session.query(ComposeDetails).get(compose_pk)
@@ -122,9 +125,7 @@ def job_details(compose_pk=None):
             abort(404)
 
         compose_id = compose_obj.compose_id
-
-        queryset = queryset.filter_by(compose_id=compose_id).filter(
-                ComposeJobDetails.arch.in_(supported_archs))
+        queryset = queryset.filter_by(compose_id=compose_id)
 
     # Apply filters
     filters = ('family', 'arch', 'status', 'image_type')
