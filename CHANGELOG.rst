@@ -1,4 +1,17 @@
 
+0.7.4
+-----
+
+Pull Requests
+
+- (@sayanchowdhury) #58, Fix the queryset to ignore globally instead of just compose id 
+  https://github.com/kushaldas/autocloud/pull/58
+
+Commits
+
+- 615b2bebc web: Fix the queryset to ignore globally instead of just compose id
+  https://github.com/kushaldas/autocloud/commit/615b2bebc
+
 0.7.3
 -----
 
