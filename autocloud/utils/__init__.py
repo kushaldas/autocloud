@@ -21,7 +21,8 @@ def produce_jobs(infox):
 
     family_mapping = {
         'Cloud_Base': 'b',
-        'Atomic': 'a'
+        'Atomic': 'a',
+        'AtomicHost': 'a',
     }
 
     session = init_model()
