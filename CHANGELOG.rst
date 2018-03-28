@@ -1,4 +1,23 @@
 
+0.8.0
+-----
+
+Pull Requests
+
+- (@vivekanand1101) #60, Fix config file
+  https://github.com/kushaldas/autocloud/pull/60
+- (@sayanchowdhury) #62, autocloud: Fix the autocloud consumer for the F28 messages
+  https://github.com/kushaldas/autocloud/pull/62
+
+Commits
+
+- 1ead83200 config: Fix typo, cofig => config
+  https://github.com/kushaldas/autocloud/commit/1ead83200
+- 2a9b88437 config: Fix loading of default config values
+  https://github.com/kushaldas/autocloud/commit/2a9b88437
+- 537134eb7 autocloud: Fix the autocloud consumer for the F28 messages
+  https://github.com/kushaldas/autocloud/commit/537134eb7
+
 0.7.4
 -----
 
